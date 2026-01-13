@@ -1,14 +1,240 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f8; }
-        h1 { color: #3498db; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>星闪动态子网管理系统 - 仪表盘</title>
+
+    <!-- 全局与页面样式 -->
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/pages/dashboard.css" />
 </head>
 <body>
-    <h1>登录成功！欢迎进入仪表盘。</h1>
+    <div class="app-shell" id="appShell">
+        <!-- 侧边导航 -->
+        <aside class="sidebar" id="sidebar" aria-label="主导航">
+            <div class="sidebar__brand">
+                <div class="brand-logo" id="sidebarLogoSlot" aria-label="系统 Logo 预留位"></div>
+                <div class="brand-text" aria-hidden="true"></div>
+                <button class="icon-btn sidebar__collapse" id="sidebarToggle" aria-label="折叠导航" aria-expanded="true">
+                    <span class="icon-bars" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <nav class="sidebar__menu" id="mainNav">
+                <a class="menu-item active" id="navDashboard" data-target="dashboard" href="#dashboard" aria-current="page">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">仪表盘</span>
+                </a>
+                <a class="menu-item" id="navDevice" data-target="device" href="#device">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">设备配置</span>
+                </a>
+                <a class="menu-item" id="navOta" data-target="ota" href="#ota">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">OTA 管理</span>
+                </a>
+                <a class="menu-item" id="navUser" data-target="user" href="#user">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">用户管理</span>
+                </a>
+                <a class="menu-item" id="navLog" data-target="log" href="#log">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">日志管理</span>
+                </a>
+                <a class="menu-item" id="navHelp" data-target="help" href="#help">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">用户帮助</span>
+                </a>
+                <a class="menu-item" id="navSetting" data-target="setting" href="#setting">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                    <span class="menu-label">系统设置</span>
+                </a>
+            </nav>
+
+            <div class="sidebar__section">
+                <div class="section-title">快捷操作</div>
+                <div class="shortcut-group">
+                    <button class="shortcut-btn" id="btnExportLog">日志导出</button>
+                    <button class="shortcut-btn" id="btnFactoryReset">恢复出厂</button>
+                    <button class="shortcut-btn" id="btnReboot">重启设备</button>
+                </div>
+            </div>
+        </aside>
+        <div class="drawer-mask" id="drawerMask"></div>
+
+        <div class="main-column">
+            <!-- 顶部栏 -->
+            <header class="topbar" id="topbar">
+                <div class="topbar__left">
+                    <button class="icon-btn topbar__menu" id="sidebarDrawerToggle" aria-label="展开导航">
+                        <span class="icon-bars" aria-hidden="true"></span>
+                    </button>
+                    <div class="brand" id="brandArea" title="双击返回仪表盘">
+                        <div class="brand-logo" id="topLogoSlot"></div>
+                        <div class="brand-name">星闪动态子网管理系统</div>
+                    </div>
+                </div>
+
+                <div class="topbar__right">
+                    <button class="icon-btn" id="themeToggle" aria-label="切换主题">
+                        <span class="icon-sun" aria-hidden="true"></span>
+                    </button>
+
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-trigger" id="userTrigger" aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar" id="userAvatar" aria-label="头像预留"></div>
+                            <div class="user-meta">
+                                <div class="user-name" id="userName">Admin</div>
+                                <div class="user-role" id="userRole">系统管理员</div>
+                            </div>
+                            <span class="chevron" aria-hidden="true"></span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown" role="menu">
+                            <button class="dropdown-item" data-action="profile" role="menuitem">个人设置</button>
+                            <button class="dropdown-item" data-action="password" role="menuitem">修改密码</button>
+                            <button class="dropdown-item danger" data-action="logout" role="menuitem">退出登录</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主内容区 -->
+            <main class="content" id="contentArea">
+                <section class="section" id="dashboardSection">
+                    <div class="section-header">
+                        <div>
+                            <h1 class="section-title">仪表盘</h1>
+                            <p class="section-sub">关键指标与网络态势总览</p>
+                        </div>
+                        <div class="section-actions">
+                            <div class="toggle-group" id="toggleGroup">
+                                <label class="switch" id="toggleAutoAvoid" data-toggle="autoAvoid">
+                                    <input type="checkbox" />
+                                    <span class="slider" aria-hidden="true"></span>
+                                    <span class="switch-label">自动避让</span>
+                                </label>
+                                <label class="switch" id="toggleAutoJoin" data-toggle="autoJoin">
+                                    <input type="checkbox" />
+                                    <span class="slider" aria-hidden="true"></span>
+                                    <span class="switch-label">自动入网</span>
+                                </label>
+                                <label class="switch" id="toggleAutoRefresh" data-toggle="autoRefresh">
+                                    <input type="checkbox" />
+                                    <span class="slider" aria-hidden="true"></span>
+                                    <span class="switch-label">自动刷新</span>
+                                </label>
+                            </div>
+                            <button class="ghost-btn" id="btnManualScan">手动扫描</button>
+                        </div>
+                    </div>
+
+                    <div class="grid metrics-grid" id="metricsGrid">
+                        <article class="card" id="cardDeviceInfo" data-card="deviceInfo" role="button" tabindex="0">
+                            <div class="card-header">
+                                <div class="card-icon" aria-hidden="true"></div>
+                                <div>
+                                    <div class="card-title">当前设备</div>
+                                    <div class="card-sub">设备状态与版本</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat" id="deviceInfoValue">--</div>
+                                <div class="stat-desc" id="deviceInfoDesc">等待数据</div>
+                            </div>
+                        </article>
+
+                        <article class="card" id="cardDeviceTotal" data-card="deviceTotal" role="button" tabindex="0">
+                            <div class="card-header">
+                                <div class="card-icon" aria-hidden="true"></div>
+                                <div>
+                                    <div class="card-title">设备总数</div>
+                                    <div class="card-sub">在线 / 离线</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat" id="deviceTotalValue">--</div>
+                                <div class="stat-desc" id="deviceTotalDesc">等待数据</div>
+                            </div>
+                        </article>
+
+                        <article class="card" id="cardTopology" data-card="topology" role="button" tabindex="0">
+                            <div class="card-header">
+                                <div class="card-icon" aria-hidden="true"></div>
+                                <div>
+                                    <div class="card-title">网络拓扑</div>
+                                    <div class="card-sub">节点与连接状态</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat" id="topologyValue">--</div>
+                                <div class="stat-desc" id="topologyDesc">等待数据</div>
+                            </div>
+                        </article>
+
+                        <article class="card" id="cardTraffic" data-card="traffic" role="button" tabindex="0">
+                            <div class="card-header">
+                                <div class="card-icon" aria-hidden="true"></div>
+                                <div>
+                                    <div class="card-title">数据流量</div>
+                                    <div class="card-sub">带宽与吞吐</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat" id="trafficValue">--</div>
+                                <div class="stat-desc" id="trafficDesc">等待数据</div>
+                            </div>
+                        </article>
+
+                        <article class="card" id="cardResource" data-card="resource" role="button" tabindex="0">
+                            <div class="card-header">
+                                <div class="card-icon" aria-hidden="true"></div>
+                                <div>
+                                    <div class="card-title">资源使用</div>
+                                    <div class="card-sub">CPU / 内存 / 存储</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat" id="resourceValue">--</div>
+                                <div class="stat-desc" id="resourceDesc">等待数据</div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <article class="panel" id="detailPanel">
+                        <div class="panel-header">
+                            <h2 id="detailTitle">详情</h2>
+                            <div class="panel-actions">
+                                <button class="ghost-btn" id="clearDetail">清空</button>
+                            </div>
+                        </div>
+                        <div class="panel-body detail-body">
+                            <div class="detail-placeholder" id="detailPlaceholder">请选择上方卡片查看实时详情</div>
+                            <div class="detail-content" id="detailContent" hidden>
+                                <div class="detail-primary" id="detailPrimary">--</div>
+                                <div class="detail-list" id="detailList"></div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            </main>
+
+            <!-- 底部栏 -->
+            <footer class="footer" id="footerBar">
+                <div class="footer-meta">
+                    <span id="footerCompany">© 2024 星闪</span>
+                    <span class="dot">•</span>
+                    <span id="footerVersion">版本 <span id="appVersion">v0.1.0</span></span>
+                    <span class="dot">•</span>
+                    <span id="footerUpdate">更新时间 <span id="lastUpdated">--</span></span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 模块化脚本 -->
+    <script src="js/modules/api-client.js"></script>
+    <script src="js/modules/layout.js"></script>
+    <script src="js/pages/dashboard.js"></script>
 </body>
 </html>
