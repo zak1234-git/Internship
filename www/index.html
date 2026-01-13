@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>星闪动态子网管理系统 - 登录</title>
+
+    <!-- 样式引入：登录页样式独立，不依赖框架布局 -->
+    <link rel="stylesheet" href="css/pages/login.css" />
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- 左侧面板：背景与Logo -->
+        <section class="left-panel" aria-label="背景区域">
+            <canvas id="backgroundCanvas" aria-hidden="true"></canvas>
+
+            <!-- Logo容器 -->
+            <div class="logo-slot" id="appLogoSlot" aria-label="软件图标预留位">
+                <!-- Logo图片位置 -->
+                <!-- <img src="assets/logo.png" alt="Logo"> -->
+            </div>
+        </section>
+
+        <!-- 右侧面板：登录表单 -->
+        <section class="right-panel" aria-label="登录区域">
+            <!-- 背景装饰光斑 -->
+            <div class="decorations" aria-hidden="true">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+            </div>
+            <!-- 背景装饰：同心圆环 -->
+            <div class="decorations" aria-hidden="true">
+                <div class="connection-rings">
+                    <div class="ring ring-sm"></div>
+                    <div class="ring ring-md"></div>
+                    <div class="ring ring-lg"></div>
+                    <div class="ring ring-orbit"></div>
+                </div>
+            </div>
+
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>星闪动态子网管理系统</h2>
+                    <p>欢迎回来，请验证您的身份</p>
+                </div>
+
+                <form class="login-form" id="loginForm">
+                    <div class="input-group">
+                        <label for="username">账号</label>
+                        <input type="text" id="username" placeholder="请输入用户名" autocomplete="username" required />
+                        <span class="focus-border" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" placeholder="请输入密码" autocomplete="current-password" required />
+                        <span class="focus-border" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <label class="checkbox-container">
+                            <input type="checkbox" />
+                            <span class="checkmark" aria-hidden="true"></span>
+                            记住我
+                        </label>
+                        <a href="#" class="forgot-password">忘记密码？</a>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        <span>登 录</span>
+                        <div class="btn-bg" aria-hidden="true"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- 脚本引入 -->
+    <script src="js/modules/api-client.js"></script>
+    <script src="js/modules/particle-background.js"></script>
+    <script src="js/modules/auth.js"></script>
+    <script src="js/pages/login.js"></script>
+</body>
+</html>
