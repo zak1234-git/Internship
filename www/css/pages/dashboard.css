@@ -48,6 +48,19 @@
     justify-self: end;
 }
 
+.app-shell.sidebar-collapsed .sidebar__brand {
+    grid-template-columns: auto;
+    padding: 10px;
+}
+
+.app-shell.sidebar-collapsed .brand-logo {
+    display: none;
+}
+
+.app-shell.sidebar-collapsed .sidebar__collapse {
+    justify-self: start;
+}
+
 .sidebar__menu {
     display: flex;
     flex-direction: column;
@@ -56,7 +69,7 @@
 
 .menu-item {
     display: grid;
-    grid-template-columns: 22px 1fr;
+    grid-template-columns: 24px 1fr;
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
@@ -79,32 +92,18 @@
 }
 
 .menu-icon {
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    border: 1px solid var(--sidebar-border);
-    background: linear-gradient(135deg, rgba(47, 125, 244, 0.28), rgba(34, 197, 94, 0.12));
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    position: relative;
-}
-
-.menu-icon::before {
-    content: '';
-    position: absolute;
-    inset: 0;
     display: grid;
     place-items: center;
-    font-size: 10px;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    font-size: 16px;
+    border-radius: 8px;
     color: var(--sidebar-text);
+    background: linear-gradient(135deg, rgba(47, 125, 244, 0.18), rgba(34, 197, 94, 0.08));
+    border: 1px solid var(--sidebar-border);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
-
-#navDashboard .menu-icon::before { content: 'DB'; }
-#navDevice .menu-icon::before { content: 'DV'; }
-#navOta .menu-icon::before { content: 'OT'; }
-#navUser .menu-icon::before { content: 'US'; }
-#navLog .menu-icon::before { content: 'LG'; }
-#navHelp .menu-icon::before { content: 'HP'; }
-#navSetting .menu-icon::before { content: 'ST'; }
 
 .sidebar__section {
     padding: 12px 10px;
@@ -377,6 +376,33 @@
 
 .switch input:checked + .slider {
     background: rgba(47, 125, 244, 0.5);
+}
+
+/* 简易向下兼容：老浏览器不支持 Grid 时改用 Flex 布局 */
+@supports not (display: grid) {
+    .app-shell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-column {
+        width: 100%;
+    }
+
+    .section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .metrics-grid > article {
+        flex: 1 1 240px;
+    }
 }
 
 .switch input:checked + .slider::after {

@@ -233,7 +233,11 @@ button {
     width: 42px;
     height: 42px;
     border-radius: 12px;
-    background: linear-gradient(135deg, rgba(75, 163, 255, 0.4), rgba(124, 231, 255, 0.2));
+    display: grid;
+    place-items: center;
+    line-height: 1;
+    font-size: 22px;
+    background: linear-gradient(135deg, rgba(75, 163, 255, 0.22), rgba(124, 231, 255, 0.14));
     border: 1px solid var(--border-soft);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }

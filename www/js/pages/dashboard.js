@@ -28,10 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupToggles();
 
-    const clearBtn = document.getElementById('clearDetail');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => clearDetail());
-    }
+    fetchDeviceBasicInfo();
 
     function initNav() {
         const nav = document.getElementById('mainNav');
@@ -115,7 +112,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!item || !detailContent || !detailPlaceholder || !detailPrimary || !detailList || !detailTitle) return;
 
         const hasDetail = item.detail && item.detail.length > 0;
-        detailTitle.textContent = `${item.title} · 详情`;
+        const titleSuffix = activeKey === 'deviceInfo' ? '具体信息' : '详情';
+        detailTitle.textContent = `${item.title} · ${titleSuffix}`;
 
         if (!hasDetail) {
             detailPlaceholder.hidden = false;
@@ -140,13 +138,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             detailList.appendChild(div);
         });
-    }
-
-    function clearDetail() {
-        const item = state[activeKey];
-        if (!item) return;
-        item.detail = [];
-        renderDetail();
     }
 
     function applyNodeVisibility() {
@@ -189,6 +180,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     function setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
+    }
+
+    async function fetchDeviceBasicInfo(nodeId = 0) {
+        try {
+            const resp = await apiClient.get(`/api/v1/nodes/nodes/${nodeId}/basicinfo`);
+            const data = resp && resp.data ? resp.data : {};
+
+            const typeLabel = data.type === 0 ? 'G' : 'T';
+            const detail = [
+                { label: '设备名称', value: data.name || '--' },
+                { label: '设备类型', value: typeLabel === 'G' ? 'G 节点' : 'T 节点' },
+                { label: 'IP 地址', value: data.ip || '--' },
+                { label: '信道', value: data.channel ?? '--' },
+                { label: '物理带宽', value: data.bw != null ? `${data.bw} MHz` : '--' },
+                { label: '业务带宽', value: data.tfc_bw != null ? `${data.tfc_bw} MHz` : '--' },
+                { label: '系统网管 IP 地址', value: data.net_manage_ip || '--' },
+                { label: '系统网管端口号', value: data.log_port ?? '--' },
+                { label: '固件版本', value: data.version || '--' },
+            ];
+
+            state.deviceInfo = {
+                ...state.deviceInfo,
+                value: data.name || '--',
+                desc: data.ip ? `IP ${data.ip}` : '无 IP 信息',
+                detail,
+            };
+
+            updateCard('deviceInfo');
+            if (activeKey === 'deviceInfo') renderDetail();
+
+            state.node = { ...state.node, type: typeLabel };
+            applyNodeVisibility();
+        } catch (error) {
+            console.error('获取节点基本信息失败', error);
+            state.deviceInfo = {
+                ...state.deviceInfo,
+                desc: '获取失败',
+            };
+            updateCard('deviceInfo');
+            if (activeKey === 'deviceInfo') renderDetail();
+        }
     }
 
     // 对外暴露增量更新接口（局部刷新，无假数据）
