@@ -1,5 +1,13 @@
 /**
  * 仪表盘页面逻辑：数据渲染、交互桥接
+ * 结构：
+ * 1) 初始化与全局状态
+ * 2) 交互绑定（导航、快捷键、开关、卡片）
+ * 3) 渲染函数（卡片与详情）
+ * 4) 节点可见性逻辑
+ * 5) 底部信息与工具函数
+ * 6) 数据拉取（真实接口调用）
+ * 7) 对外暴露的 patch 接口
  */
 document.addEventListener('DOMContentLoaded', async () => {
     // 初始化全局模块
@@ -8,8 +16,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 指标状态（无假数据，占位符）
     const metricKeys = ['deviceInfo', 'deviceTotal', 'topology', 'traffic', 'resource'];
+
+    // 示例数据：用于首屏样式预览，真实接口返回后会覆盖
+    const demoBasicInfo = {
+        status: 'success',
+        data: {
+            id: 0,
+            name: 'Gnode_00',
+            mac: '5A:5A:55:EA:49E2',
+            bw: 20,
+            tfc_bw: 20,
+            type: 0,
+            channel: 2479,
+            rssi: 0,
+            ip: '192.168.99.14',
+            version: 'v1.1.23_123.B215',
+            net_manage_ip: '192.168.99.111',
+            log_port: 6025,
+            aj_flag: 0,
+        },
+    };
+
     const state = {
-        deviceInfo: { title: '当前设备', value: '--', desc: '等待数据', detail: [] },
+        deviceInfo: { title: '当前设备', value: demoBasicInfo.data.name, desc: `IP ${demoBasicInfo.data.ip}`, detail: [] },
         deviceTotal: { title: '设备总数', value: '--', desc: '等待数据', detail: [] },
         topology: { title: '网络拓扑', value: '--', desc: '等待数据', detail: [] },
         traffic: { title: '数据流量', value: '--', desc: '等待数据', detail: [] },
@@ -19,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let activeKey = 'deviceInfo';
 
+    // 初始化交互与首屏渲染
     initNav();
     bindShortcuts();
     bindCards();
@@ -28,6 +58,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupToggles();
 
+    // 预填示例详情便于首屏展示
+    hydrateDeviceDetail(demoBasicInfo.data, true);
+
+    // 首次拉取当前设备信息
     fetchDeviceBasicInfo();
 
     function initNav() {
@@ -68,6 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function bindCards() {
+        // 卡片可点击与键盘可达
         metricKeys.forEach((key) => {
             const card = document.querySelector(`[data-card="${key}"]`);
             if (!card) return;
@@ -95,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updateCard(key) {
+        // 填充卡片主数值与描述
         const item = state[key];
         if (!item) return;
         setText(`${key}Value`, item.value ?? '--');
@@ -111,6 +147,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const item = state[activeKey];
         if (!item || !detailContent || !detailPlaceholder || !detailPrimary || !detailList || !detailTitle) return;
 
+        // 非“当前设备”卡片默认不显示设备详情，避免残留内容误展示
+        if (activeKey !== 'deviceInfo') {
+            detailTitle.textContent = `${item.title} · 详情`;
+            detailPlaceholder.hidden = false;
+            detailContent.hidden = true;
+            detailPrimary.textContent = '--';
+            detailList.innerHTML = '';
+            return;
+        }
+
         const hasDetail = item.detail && item.detail.length > 0;
         const titleSuffix = activeKey === 'deviceInfo' ? '具体信息' : '详情';
         detailTitle.textContent = `${item.title} · ${titleSuffix}`;
@@ -126,21 +172,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         detailPrimary.textContent = item.value ?? '--';
         detailList.innerHTML = '';
 
+        // 构建详情条目（字符串或 {label,value}），使用 label/value 分栏便于排版
         item.detail.forEach((row) => {
             const div = document.createElement('div');
             div.className = 'detail-item';
+
             if (typeof row === 'string') {
                 div.textContent = row;
-            } else {
-                const label = row.label || '项';
-                const value = row.value || '--';
-                div.innerHTML = `<strong>${label}</strong>：${value}`;
+                detailList.appendChild(div);
+                return;
             }
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'detail-label';
+            labelSpan.textContent = row.label || '项';
+
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'detail-value';
+            valueSpan.textContent = row.value || '--';
+
+            div.appendChild(labelSpan);
+            div.appendChild(valueSpan);
             detailList.appendChild(div);
         });
     }
 
     function applyNodeVisibility() {
+        // 节点类型驱动的控件显示：G 节点展示“自动避让”，T 节点展示“自动入网/手动扫描”
         const type = state.node.type;
         const autoAvoidWrap = document.getElementById('toggleAutoAvoid');
         const autoJoinWrap = document.getElementById('toggleAutoJoin');
@@ -152,6 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updateNodeFlags(partial) {
+        // 合并节点状态并同步 UI
         state.node = { ...state.node, ...partial };
         const { autoAvoid, autoJoin, autoRefresh } = state.node;
 
@@ -184,34 +243,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchDeviceBasicInfo(nodeId = 0) {
         try {
-            const resp = await apiClient.get(`/api/v1/nodes/nodes/${nodeId}/basicinfo`);
+            const resp = await apiClient.getNodeBasicInfo(nodeId);
             const data = resp && resp.data ? resp.data : {};
 
-            const typeLabel = data.type === 0 ? 'G' : 'T';
-            const detail = [
-                { label: '设备名称', value: data.name || '--' },
-                { label: '设备类型', value: typeLabel === 'G' ? 'G 节点' : 'T 节点' },
-                { label: 'IP 地址', value: data.ip || '--' },
-                { label: '信道', value: data.channel ?? '--' },
-                { label: '物理带宽', value: data.bw != null ? `${data.bw} MHz` : '--' },
-                { label: '业务带宽', value: data.tfc_bw != null ? `${data.tfc_bw} MHz` : '--' },
-                { label: '系统网管 IP 地址', value: data.net_manage_ip || '--' },
-                { label: '系统网管端口号', value: data.log_port ?? '--' },
-                { label: '固件版本', value: data.version || '--' },
-            ];
-
-            state.deviceInfo = {
-                ...state.deviceInfo,
-                value: data.name || '--',
-                desc: data.ip ? `IP ${data.ip}` : '无 IP 信息',
-                detail,
-            };
-
-            updateCard('deviceInfo');
-            if (activeKey === 'deviceInfo') renderDetail();
-
-            state.node = { ...state.node, type: typeLabel };
-            applyNodeVisibility();
+            hydrateDeviceDetail(data, false);
         } catch (error) {
             console.error('获取节点基本信息失败', error);
             state.deviceInfo = {
@@ -221,6 +256,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateCard('deviceInfo');
             if (activeKey === 'deviceInfo') renderDetail();
         }
+    }
+
+    function hydrateDeviceDetail(data, isDemo = false) {
+        const typeLabel = data.type === 0 ? 'G' : 'T';
+        const detail = [
+            { label: '设备名称', value: data.name || '--' },
+            { label: '设备类型', value: typeLabel === 'G' ? 'G 节点' : 'T 节点' },
+            { label: 'IP 地址', value: data.ip || '--' },
+            { label: '信道', value: data.channel ?? '--' },
+            { label: '物理带宽', value: data.bw != null ? `${data.bw} MHz` : '--' },
+            { label: '业务带宽', value: data.tfc_bw != null ? `${data.tfc_bw} MHz` : '--' },
+            { label: '系统网管 IP 地址', value: data.net_manage_ip || '--' },
+            { label: '系统网管端口号', value: data.log_port ?? '--' },
+            { label: '固件版本', value: data.version || '--' },
+        ];
+
+        const desc = data.ip ? `IP ${data.ip}` : '无 IP 信息';
+        const value = data.name || '--';
+
+        state.deviceInfo = {
+            ...state.deviceInfo,
+            value,
+            desc: isDemo ? `${desc}（示例）` : desc,
+            detail,
+        };
+
+        updateCard('deviceInfo');
+        if (activeKey === 'deviceInfo') renderDetail();
+
+        state.node = { ...state.node, type: typeLabel };
+        applyNodeVisibility();
     }
 
     // 对外暴露增量更新接口（局部刷新，无假数据）
