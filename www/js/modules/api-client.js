@@ -18,7 +18,7 @@ class ApiClient {
         if (this.initialized) return;
 
         try {
-            // 读取根目录下的 config.json
+            // 读取根目录下的 config.json，避免把接口地址写死在代码里
             const response = await fetch('config.json');
             if (!response.ok) throw new Error('无法加载配置文件');
             
@@ -28,7 +28,7 @@ class ApiClient {
             const ip = config.serverip || 'localhost';
             const port = config.port || '8080';
             
-            // 智能构建 Base URL
+            // 智能构建 Base URL：支持直接写 http/https，也支持裸 IP/域名
             if (ip.startsWith('http://') || ip.startsWith('https://')) {
                 this.baseUrl = `${ip}:${port}`;
             } else {

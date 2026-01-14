@@ -14,6 +14,7 @@ class AuthManager {
     }
 
     init() {
+        // 表单统一在这里绑定提交事件，便于后续扩展/解绑
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 

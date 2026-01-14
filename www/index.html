@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>星闪动态子网管理系统 - 登录</title>
 
-    <!-- 样式引入：登录页样式独立，不依赖框架布局 -->
+    <!-- 登录页独立样式；不复用 dashboard 布局，避免全局变量冲突 -->
     <link rel="stylesheet" href="css/pages/login.css" />
 </head>
 <body>
     <div class="main-wrapper">
-        <!-- 左侧面板：背景与Logo -->
+        <!-- 左侧面板：放置动态背景与品牌槽位；不含交互控件 -->
         <section class="left-panel" aria-label="背景区域">
+            <!-- 粒子动画所在的画布，particle-background.js 会挂载到此处 -->
             <canvas id="backgroundCanvas" aria-hidden="true"></canvas>
 
-            <!-- Logo容器 -->
+            <!-- 预留 Logo 区域，方便后续放置产品图标或 SVG -->
             <div class="logo-slot" id="appLogoSlot" aria-label="软件图标预留位">
-                <!-- Logo图片位置 -->
                 <!-- <img src="assets/logo.png" alt="Logo"> -->
             </div>
         </section>
 
-        <!-- 右侧面板：登录表单 -->
+        <!-- 右侧面板：主交互区域，承载登录表单与装饰背景 -->
         <section class="right-panel" aria-label="登录区域">
-            <!-- 背景装饰光斑 -->
+            <!-- 背景装饰光斑层，纯视觉元素 -->
             <div class="decorations" aria-hidden="true">
                 <div class="circle circle-1"></div>
                 <div class="circle circle-2"></div>
             </div>
-            <!-- 背景装饰：同心圆环 -->
+            <!-- 同心圆环层，增加科技感背景纹理 -->
             <div class="decorations" aria-hidden="true">
                 <div class="connection-rings">
                     <div class="ring ring-sm"></div>
@@ -38,6 +38,7 @@
                 </div>
             </div>
 
+            <!-- 登录卡片主体：标题、输入框、辅助操作与提交按钮 -->
             <div class="login-container">
                 <div class="login-header">
                     <h2>星闪动态子网管理系统</h2>
@@ -75,7 +76,7 @@
         </section>
     </div>
 
-    <!-- 脚本引入 -->
+    <!-- 模块脚本：顺序保证 apiClient 先初始化，粒子背景与认证依赖已存在的全局对象 -->
     <script src="js/modules/api-client.js"></script>
     <script src="js/modules/particle-background.js"></script>
     <script src="js/modules/auth.js"></script>

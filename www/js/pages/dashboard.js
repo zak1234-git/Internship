@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchDeviceBasicInfo();
 
     function initNav() {
+        // 左侧导航仅做选中态切换，实际视图切换可后续扩展
         const nav = document.getElementById('mainNav');
         if (!nav) return;
         nav.addEventListener('click', (e) => {
@@ -76,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function bindShortcuts() {
+        // 侧边“快捷操作”按钮映射到具体回调，当前为占位日志
         const map = {
             btnExportLog: () => console.log('TODO: 导出日志'),
             btnFactoryReset: () => console.log('TODO: 恢复出厂设置'),
@@ -259,6 +261,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function hydrateDeviceDetail(data, isDemo = false) {
+        // 将后端返回的字段映射到详情卡片。type 0/1 -> G/T 节点。
         const typeLabel = data.type === 0 ? 'G' : 'T';
         const detail = [
             { label: '设备名称', value: data.name || '--' },

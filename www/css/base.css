@@ -1,4 +1,5 @@
-/* 基础样式与主题变量（默认浅色） */
+/* 基础样式与主题变量（默认浅色）
+ * 说明：集中定义色板、阴影、圆角与常用尺寸，方便切换主题与复用。 */
 :root {
     --bg-body: #f4f7fb;
     --bg-surface: #ffffff;
@@ -48,7 +49,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* 深色模式覆盖 */
+/* 深色模式覆盖：通过切换 body.theme-dark 覆盖变量，无需重写组件样式 */
 body.theme-dark {
     --bg-body: #0b1628;
     --bg-surface: #111d33;
@@ -88,6 +89,7 @@ button {
     cursor: pointer;
 }
 
+/* 页面整体布局：左侧 sidebar + 右侧内容列 */
 .app-shell {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
@@ -103,12 +105,14 @@ button {
     grid-template-columns: 1fr;
 }
 
+/* 右侧内容列：顶部栏 + 内容区 + 底栏 */
 .main-column {
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
 }
 
+/* 通用图标按钮：用于折叠/主题/抽屉等快捷操作 */
 .icon-btn {
     width: 38px;
     height: 38px;
@@ -126,6 +130,7 @@ button {
     transform: translateY(-1px);
 }
 
+/* 折叠/主题按钮图形，使用伪元素绘制基础形态 */
 .icon-bars,
 .icon-sun {
     position: relative;
@@ -155,6 +160,7 @@ button {
     background: none;
 }
 
+/* 次级按钮：用于“手动扫描”等辅助操作 */
 .ghost-btn {
     padding: 10px 14px;
     border-radius: var(--radius-sm);
@@ -170,6 +176,7 @@ button {
     transform: translateY(-1px);
 }
 
+/* 通用区块布局与排版 */
 .section {
     display: flex;
     flex-direction: column;
@@ -198,6 +205,7 @@ button {
     gap: 10px;
 }
 
+/* 通用栅格：卡片和面板用的自适应网格 */
 .grid {
     display: grid;
     gap: 16px;
@@ -211,6 +219,7 @@ button {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
+/* 卡片与面板基底：阴影+圆角统一 */
 .card,
 .panel {
     background: var(--bg-surface);
@@ -255,6 +264,7 @@ button {
     margin-top: 6px;
 }
 
+/* 核心数字强调样式 */
 .stat {
     font-size: 26px;
     font-weight: 800;
@@ -266,6 +276,7 @@ button {
     margin-top: 4px;
 }
 
+/* 详情面板默认态：居中空状态提示 */
 .panel-body {
     color: var(--text-muted);
     min-height: 180px;
@@ -275,6 +286,7 @@ button {
     place-items: center;
 }
 
+/* 底栏：展示版本与时间信息，半透明玻璃效果 */
 .footer {
     padding: 12px 18px;
     background: var(--glass-bg);

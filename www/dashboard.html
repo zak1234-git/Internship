@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>星闪动态子网管理系统 - 仪表盘</title>
 
-    <!-- 全局与页面样式 -->
+    <!-- 基础主题变量 + 仪表盘专属样式。base.css 提供布局栅格、卡片、按钮等基础组件。 -->
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/pages/dashboard.css" />
 </head>
@@ -13,6 +13,7 @@
     <div class="app-shell" id="appShell">
         <!-- 侧边导航 -->
         <aside class="sidebar" id="sidebar" aria-label="主导航">
+            <!-- 品牌区：Logo 占位 + 折叠开关 -->
             <div class="sidebar__brand">
                 <div class="brand-logo" id="sidebarLogoSlot" aria-label="系统 Logo 预留位"></div>
                 <div class="brand-text" aria-hidden="true"></div>
@@ -21,6 +22,7 @@
                 </button>
             </div>
 
+            <!-- 主导航：仅标记为锚点，实际跳转/激活逻辑在 dashboard.js 里处理 -->
             <nav class="sidebar__menu" id="mainNav">
                 <a class="menu-item active" id="navDashboard" data-target="dashboard" href="#dashboard" aria-current="page">
                     <span class="menu-icon" aria-hidden="true">📊</span>
@@ -52,6 +54,7 @@
                 </a>
             </nav>
 
+            <!-- 快捷操作：静态按钮位，事件绑定在 dashboard.js 中 -->
             <div class="sidebar__section">
                 <div class="section-title">快捷操作</div>
                 <div class="shortcut-group">
@@ -67,9 +70,11 @@
             <!-- 顶部栏 -->
             <header class="topbar" id="topbar">
                 <div class="topbar__left">
+                    <!-- 移动端抽屉开关 -->
                     <button class="icon-btn topbar__menu" id="sidebarDrawerToggle" aria-label="展开导航">
                         <span class="icon-bars" aria-hidden="true"></span>
                     </button>
+                    <!-- 品牌标题，双击回到仪表盘 -->
                     <div class="brand" id="brandArea" title="双击返回仪表盘">
                         <div class="brand-logo" id="topLogoSlot"></div>
                         <div class="brand-name">星闪动态子网管理系统</div>
@@ -77,10 +82,12 @@
                 </div>
 
                 <div class="topbar__right">
+                    <!-- 主题切换按钮（浅色/深色），逻辑在 layout.js -->
                     <button class="icon-btn" id="themeToggle" aria-label="切换主题">
                         <span class="icon-sun" aria-hidden="true"></span>
                     </button>
 
+                    <!-- 用户菜单：点击打开下拉，事件在 layout.js 控制 -->
                     <div class="user-menu" id="userMenu">
                         <button class="user-trigger" id="userTrigger" aria-haspopup="true" aria-expanded="false">
                             <div class="avatar" id="userAvatar" aria-label="头像预留"></div>
@@ -102,6 +109,7 @@
             <!-- 主内容区 -->
             <main class="content" id="contentArea">
                 <section class="section" id="dashboardSection">
+                    <!-- 标题与控制区：包含自动开关与手动扫描按钮 -->
                     <div class="section-header">
                         <div>
                             <h1 class="section-title">仪表盘</h1>
@@ -129,6 +137,7 @@
                         </div>
                     </div>
 
+                    <!-- 指标卡片区：点击/键盘 Enter 选中，详情区域根据 activeKey 渲染 -->
                     <div class="grid metrics-grid" id="metricsGrid">
                         <article class="card" id="cardDeviceInfo" data-card="deviceInfo" role="button" tabindex="0">
                             <div class="card-header">
@@ -201,6 +210,7 @@
                         </article>
                     </div>
 
+                    <!-- 详情面板：展示当前激活卡片的详细字段 -->
                     <article class="panel" id="detailPanel">
                         <div class="panel-header">
                             <h2 id="detailTitle">详情</h2>
@@ -229,7 +239,7 @@
         </div>
     </div>
 
-    <!-- 模块化脚本 -->
+    <!-- 模块化脚本：api-client 提供后端通信，layout 管理交互外壳，dashboard 页面逻辑 -->
     <script src="js/modules/api-client.js"></script>
     <script src="js/modules/layout.js"></script>
     <script src="js/pages/dashboard.js"></script>

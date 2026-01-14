@@ -20,7 +20,7 @@ class Particle {
         const ctx = this.bgSystem.ctx;
         
         if (this.type.startsWith('router')) {
-            // 绘制图片
+            // 绘制图片节点（Hub/Leaf 共用路由器 SVG）
             const img = this.bgSystem.routerImage;
             // 确保图片已加载且尺寸有效
             if (img.complete && img.naturalWidth !== 0) {
@@ -95,14 +95,14 @@ class ParticleBackground {
         this.ctx = this.canvas.getContext('2d');
         this.container = document.querySelector(containerSelector);
         
-        // 两个独立的粒子系统
+        // 两个独立的粒子系统：背景圆点 + 路由器网络
         this.bgParticles = []; // 背景圆点
         this.routerNodes = []; // 路由器节点
         
-        // 加载路由器图标
+        // 加载路由器图标（使用 PNG 适配低版本浏览器，避免 SVG 兼容性问题）
         this.routerImage = new Image();
-        // 路径相对于 index.html，HTML 在根目录，所以即 assets/router.svg
-        this.routerImage.src = 'assets/router.svg';
+        // 路径相对于 index.html，HTML 在根目录，所以即 assets/router.png
+        this.routerImage.src = 'assets/router.png';
         
         // 鼠标交互配置
         this.mouse = {
@@ -117,7 +117,7 @@ class ParticleBackground {
     init() {
         if (!this.canvas || !this.ctx) return;
 
-        // 绑定事件
+        // 绑定事件：窗口缩放重置粒子，鼠标移动用于排斥效果
         window.addEventListener('resize', () => {
             this.resizeCanvas();
             this.initParticles();
@@ -168,7 +168,7 @@ class ParticleBackground {
             this.bgParticles.push(new Particle(this, x, y, directionX, directionY, size, color, 'dot'));
         }
 
-        // 2. 初始化路由器网络 
+        // 2. 初始化路由器网络：中心 Hub + 多个 Leaf
         const centerX = this.canvas.width * 0.325;
         const centerY = this.canvas.height * 0.5;
 
@@ -212,7 +212,7 @@ class ParticleBackground {
         hub.floatPhase = 0;
     }
 
-    // 绘制背景圆点的连线
+    // 绘制背景圆点的连线：距离阈值内的点用半透明线连接
     connectBackground() {
         for (let a = 0; a < this.bgParticles.length; a++) {
             for (let b = a + 1; b < this.bgParticles.length; b++) {

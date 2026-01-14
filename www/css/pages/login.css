@@ -2,6 +2,7 @@
  * 登录页面专用样式 (Login Styles)
  * 包含：CSS变量定义、全局重置、通用样式
  * 注意：此文件独立于 base.css 和 layout.css，因为登录页布局特殊
+ * 设计目标：高斯模糊 + 粒子背景 + 右侧登录表单卡片。
  */
 
  :root {
@@ -40,7 +41,7 @@ body {
  * 包含：主容器、左右分栏、响应式布局
  */
 
-/* 主布局容器 */
+/* 主布局容器：左右分栏，左侧放动画，右侧放表单 */
 .main-wrapper {
     width: 100%;
     height: 100%;
@@ -49,7 +50,7 @@ body {
     background: linear-gradient(135deg, #f7faff 0%, #d7e4f5 45%, #c8d7ef 100%);
 }
 
-/* 左侧面板 */
+/* 左侧面板：透明背景，仅展示 Canvas 粒子与 Logo 槽位 */
 .left-panel {
     flex: 6.5;
     position: relative;
@@ -67,7 +68,7 @@ body {
     z-index: 0;
 }
 
-/* 右侧面板 */
+/* 右侧面板：模糊玻璃容器，承载登录框与背景装饰 */
 .right-panel {
     flex: 3.5;
     position: relative;
@@ -88,7 +89,7 @@ body {
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.03);
 }
 
-/* 背景网格纹理 */
+/* 背景网格纹理：叠加轻量格线和遮罩，营造科技感 */
 .right-panel::before {
     content: "";
     position: absolute;
@@ -105,7 +106,7 @@ body {
     -webkit-mask-image: radial-gradient(circle at 50% 45%, rgba(0,0,0,0.9) 35%, transparent 75%);
 }
 
-/* 响应式布局 */
+/* 响应式布局：窄屏时上下堆叠，右侧圆角顶部突出 */
 @media (max-width: 900px) {
     .main-wrapper {
         flex-direction: column;
@@ -122,7 +123,7 @@ body {
     }
 }
 
-/* 右侧背景装饰光斑 */
+/* 右侧背景装饰光斑：彩色模糊圆，轻微浮动动画 */
 .decorations {
     position: absolute;
     inset: 0;
@@ -164,7 +165,7 @@ body {
     100% { transform: translate(20px, 30px); }
 }
 
-/* 右侧背景装饰：连接圆环 */
+/* 右侧背景装饰：连接圆环，逐层脉冲动画 */
 .connection-rings {
     position: relative;
     width: 100%;
@@ -251,7 +252,7 @@ body {
  * 包含：Logo、登录框、表单元素、按钮
  */
 
-/* Logo 容器 */
+/* Logo 容器：玻璃拟态方块，预留产品 Logo 放置 */
 .logo-slot {
     position: absolute;
     left: 48px;
@@ -279,7 +280,7 @@ body {
     }
 }
 
-/* 登录框容器 */
+/* 登录框容器：半透明卡片，悬浮阴影，承载表单 */
 .login-container {
     position: relative;
     z-index: 1;
@@ -302,7 +303,7 @@ body {
     box-shadow: 0 25px 70px rgba(31, 38, 135, 0.20);
 }
 
-/* 标题区域 */
+/* 标题区域：产品名称 + 副标题 */
 .login-header {
     text-align: left;
     margin-bottom: 26px;
@@ -320,7 +321,7 @@ body {
     font-size: 13px;
 }
 
-/* 表单输入组 */
+/* 表单输入组：label + 输入框 + 焦点高亮线 */
 .input-group {
     position: relative;
     margin-bottom: 18px;
@@ -354,7 +355,7 @@ body {
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.12);
 }
 
-/* 焦点动画线条 */
+/* 焦点动画线条：输入聚焦时展开的底部色条 */
 .focus-border {
     position: absolute;
     left: 10px;
@@ -374,7 +375,7 @@ body {
     width: calc(100% - 20px);
 }
 
-/* 底部操作栏 */
+/* 底部操作栏：记住我 + 忘记密码链接 */
 .form-actions {
     display: flex;
     justify-content: space-between;
@@ -392,7 +393,7 @@ body {
     text-decoration: underline;
 }
 
-/* 复选框 */
+/* 复选框：使用原生勾选，靠 accent-color 着色 */
 .checkbox-container {
     display: inline-flex;
     align-items: center;
@@ -405,7 +406,7 @@ body {
     accent-color: var(--primary-color);
 }
 
-/* 登录按钮 */
+/* 登录按钮：渐变动效 + 圆角 Pill 形态 */
 .login-btn {
     position: relative;
     width: 100%;
@@ -437,7 +438,7 @@ body {
     transform: translateY(0);
 }
 
-/* 按钮背景层 */
+/* 按钮背景层：当前未启用，保留扩展位 */
 .btn-bg {
     display: none;
 }
