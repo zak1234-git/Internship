@@ -45,6 +45,20 @@
     background: rgba(47, 125, 244, 0.08);
 }
 
+/* 品牌位：星闪长方形 Logo，自适应宽高比并去除占位描边 */
+.brand-logo--image {
+    width: clamp(88px, 14vw, 150px);
+    height: clamp(36px, 6vw, 64px);
+    aspect-ratio: 2.6 / 1;
+    background-image: url('../../assets/星闪.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
 .brand-text { display: none; }
 
 .sidebar__collapse {
@@ -173,12 +187,11 @@
     display: none;
 }
 
-/* 顶部品牌标题区，支持双击回到仪表盘 */
+/* 顶部品牌标题区，支持双击回到仪表盘（仅保留文字，不再占位 Logo） */
 .brand {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
 }
 
@@ -513,6 +526,23 @@
     display: block;
 }
 
+/* 底栏徽标：放置微泰.png，尺寸小且半透明，避免抢占视觉 */
+.footer-brandmark {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 96px;
+    opacity: 0.72;
+    filter: saturate(0.92);
+    pointer-events: none;
+}
+
+.footer-brandmark img {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
+}
+
 @media (max-width: 720px) {
     .topbar {
         flex-direction: column;
@@ -523,5 +553,9 @@
     .topbar__right {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .footer-brandmark img {
+        height: 16px;
     }
 }

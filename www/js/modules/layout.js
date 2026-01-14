@@ -6,6 +6,7 @@
  */
 class LayoutController {
     constructor() {
+        // 缓存常用的布局节点，事件处理时直接复用，减少重复查询
         this.shell = document.getElementById('appShell');
         this.sidebar = document.getElementById('sidebar');
         this.sidebarToggle = document.getElementById('sidebarToggle');
@@ -17,9 +18,11 @@ class LayoutController {
         this.userTrigger = document.getElementById('userTrigger');
         this.userDropdown = document.getElementById('userDropdown');
 
+        // 1024px 以下切换为抽屉模式，桌面保持可折叠侧边栏
         this.drawerBreakpoint = 1024;
         this.isDrawer = window.innerWidth < this.drawerBreakpoint;
         this.isCollapsed = false;
+        // 默认检查 body 是否已有深色主题类，确保不重复添加
         this.isDark = document.body.classList.contains('theme-dark');
         if (!this.isDark) {
             document.body.classList.remove('theme-dark');
@@ -30,6 +33,7 @@ class LayoutController {
     }
 
     bindEvents() {
+        // 注册侧边栏、抽屉、主题、用户菜单的所有交互事件
         // 桌面折叠按钮
         if (this.sidebarToggle) {
             this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
@@ -106,6 +110,7 @@ class LayoutController {
     }
 
     closeDrawer() {
+        // ESC 或点击遮罩时关闭抽屉
         if (!this.isDrawer) return;
         this.shell.classList.remove('drawer-open');
         if (this.drawerMask) this.drawerMask.style.display = 'none';

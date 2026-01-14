@@ -15,7 +15,8 @@
         <aside class="sidebar" id="sidebar" aria-label="主导航">
             <!-- 品牌区：Logo 占位 + 折叠开关 -->
             <div class="sidebar__brand">
-                <div class="brand-logo" id="sidebarLogoSlot" aria-label="系统 Logo 预留位"></div>
+                <!-- 左上 Logo：用于桌面/抽屉导航，使用星闪.png 作品牌标识 -->
+                <div class="brand-logo brand-logo--image" id="sidebarLogoSlot" aria-label="星闪 Logo"></div>
                 <div class="brand-text" aria-hidden="true"></div>
                 <button class="icon-btn sidebar__collapse" id="sidebarToggle" aria-label="折叠导航" aria-expanded="true">
                     <span class="icon-bars" aria-hidden="true"></span>
@@ -76,7 +77,6 @@
                     </button>
                     <!-- 品牌标题，双击回到仪表盘 -->
                     <div class="brand" id="brandArea" title="双击返回仪表盘">
-                        <div class="brand-logo" id="topLogoSlot"></div>
                         <div class="brand-name">星闪动态子网管理系统</div>
                     </div>
                 </div>
@@ -234,6 +234,10 @@
                     <span id="footerVersion">版本 <span id="appVersion">v0.1.0</span></span>
                     <span class="dot">•</span>
                     <span id="footerUpdate">更新时间 <span id="lastUpdated">--</span></span>
+                </div>
+                <!-- 底部角落放置低调的“微泰”标识，尽量不干扰主信息 -->
+                <div class="footer-brandmark" aria-hidden="true">
+                    <img src="assets/微泰.png" alt="微泰" loading="lazy" />
                 </div>
             </footer>
         </div>
