@@ -108,122 +108,7 @@
 
             <!-- 主内容区 -->
             <main class="content" id="contentArea">
-                <section class="section" id="dashboardSection">
-                    <!-- 标题与控制区：包含自动开关与手动扫描按钮 -->
-                    <div class="section-header">
-                        <div>
-                            <h1 class="section-title">仪表盘</h1>
-                            <p class="section-sub">关键指标与网络态势总览</p>
-                        </div>
-                        <div class="section-actions">
-                            <div class="toggle-group" id="toggleGroup">
-                                <label class="switch" id="toggleAutoAvoid" data-toggle="autoAvoid">
-                                    <input type="checkbox" />
-                                    <span class="slider" aria-hidden="true"></span>
-                                    <span class="switch-label">自动避让</span>
-                                </label>
-                                <label class="switch" id="toggleAutoJoin" data-toggle="autoJoin">
-                                    <input type="checkbox" />
-                                    <span class="slider" aria-hidden="true"></span>
-                                    <span class="switch-label">自动入网</span>
-                                </label>
-                                <label class="switch" id="toggleAutoRefresh" data-toggle="autoRefresh">
-                                    <input type="checkbox" />
-                                    <span class="slider" aria-hidden="true"></span>
-                                    <span class="switch-label">自动刷新</span>
-                                </label>
-                            </div>
-                            <button class="ghost-btn" id="btnManualScan">手动扫描</button>
-                        </div>
-                    </div>
-
-                    <!-- 指标卡片区：点击/键盘 Enter 选中，详情区域根据 activeKey 渲染 -->
-                    <div class="grid metrics-grid" id="metricsGrid">
-                        <article class="card" id="cardDeviceInfo" data-card="deviceInfo" role="button" tabindex="0">
-                            <div class="card-header">
-                                <div class="card-icon" aria-hidden="true">📱</div>
-                                <div>
-                                    <div class="card-title">当前设备</div>
-                                    <div class="card-sub">设备状态与版本</div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat" id="deviceInfoValue">--</div>
-                                <div class="stat-desc" id="deviceInfoDesc">等待数据</div>
-                            </div>
-                        </article>
-
-                        <article class="card" id="cardDeviceTotal" data-card="deviceTotal" role="button" tabindex="0">
-                            <div class="card-header">
-                                <div class="card-icon" aria-hidden="true">📊</div>
-                                <div>
-                                    <div class="card-title">设备总数</div>
-                                    <div class="card-sub">在线 / 离线</div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat" id="deviceTotalValue">--</div>
-                                <div class="stat-desc" id="deviceTotalDesc">等待数据</div>
-                            </div>
-                        </article>
-
-                        <article class="card" id="cardTopology" data-card="topology" role="button" tabindex="0">
-                            <div class="card-header">
-                                <div class="card-icon" aria-hidden="true">🌐</div>
-                                <div>
-                                    <div class="card-title">网络拓扑</div>
-                                    <div class="card-sub">节点与连接状态</div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat" id="topologyValue">--</div>
-                                <div class="stat-desc" id="topologyDesc">等待数据</div>
-                            </div>
-                        </article>
-
-                        <article class="card" id="cardTraffic" data-card="traffic" role="button" tabindex="0">
-                            <div class="card-header">
-                                <div class="card-icon" aria-hidden="true">📶</div>
-                                <div>
-                                    <div class="card-title">数据流量</div>
-                                    <div class="card-sub">带宽与吞吐</div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat" id="trafficValue">--</div>
-                                <div class="stat-desc" id="trafficDesc">等待数据</div>
-                            </div>
-                        </article>
-
-                        <article class="card" id="cardResource" data-card="resource" role="button" tabindex="0">
-                            <div class="card-header">
-                                <div class="card-icon" aria-hidden="true">💾</div>
-                                <div>
-                                    <div class="card-title">资源使用</div>
-                                    <div class="card-sub">CPU / 内存 / 存储</div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat" id="resourceValue">--</div>
-                                <div class="stat-desc" id="resourceDesc">等待数据</div>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- 详情面板：展示当前激活卡片的详细字段 -->
-                    <article class="panel" id="detailPanel">
-                        <div class="panel-header">
-                            <h2 id="detailTitle">详情</h2>
-                        </div>
-                        <div class="panel-body detail-body">
-                            <div class="detail-placeholder" id="detailPlaceholder">请选择上方卡片查看实时详情</div>
-                            <div class="detail-content" id="detailContent" hidden>
-                                <div class="detail-primary" id="detailPrimary">--</div>
-                                <div class="detail-list" id="detailList"></div>
-                            </div>
-                        </div>
-                    </article>
-                </section>
+                <!-- section 内容通过 JS 从 fragments/*.html 懒加载并显隐 -->
             </main>
 
             <!-- 底部栏 -->
@@ -247,5 +132,6 @@
     <script src="js/modules/api-client.js"></script>
     <script src="js/modules/layout.js"></script>
     <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/app.js"></script>
 </body>
 </html>

@@ -20,6 +20,14 @@ class ApiClient {
     async init() {
         if (this.initialized) return;
 
+        // file:// 预览时直接跳过网络配置，交由页面使用示例数据
+        if (window.location.protocol === 'file:') {
+            console.warn('[ApiClient] file:// 预览，跳过 config.json，使用占位 baseUrl');
+            this.baseUrl = '';
+            this.initialized = true;
+            return;
+        }
+
         try {
             // 读取根目录下的 config.json，避免把接口地址写死在代码里
             const response = await fetch('config.json');
@@ -38,12 +46,13 @@ class ApiClient {
                 this.baseUrl = `http://${ip}:${port}`;
             }
             
-            this.initialized = true;
             console.log(`[ApiClient] 初始化成功，API 地址: ${this.baseUrl}`);
         } catch (error) {
-            console.error('[ApiClient] 初始化失败:', error);
-            // 可以在这里设置一个默认的 fallback 地址，或者抛出错误阻断应用
-            // this.baseUrl = 'http://localhost:8080'; 
+            console.warn('[ApiClient] 初始化失败，将使用默认占位，file:// 预览将直接走示例数据:', error);
+            // 允许后续逻辑继续运行（例如本地 file:// 预览使用示例数据）
+            this.baseUrl = '';
+        } finally {
+            this.initialized = true;
         }
     }
 
@@ -65,6 +74,11 @@ class ApiClient {
      */
     async request(endpoint, options = {}) {
         if (!this.initialized) await this.init();
+
+        // 本地 file:// 访问且未配置 baseUrl 时直接报错，让上层使用示例数据
+        if (!this.baseUrl && window.location.protocol === 'file:') {
+            throw new Error('LOCAL_FILE_PREVIEW_NO_BASEURL');
+        }
 
         const url = this.buildUrl(endpoint);
 
@@ -126,7 +140,7 @@ class ApiClient {
     }
 
     /** 登录，返回 token */
-    login(payload) {
+    login(payload) {  
         return this.post('/user/login', payload);
     }
 
