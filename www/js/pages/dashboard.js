@@ -11,10 +11,10 @@
  */
 document.addEventListener('DOMContentLoaded', async () => {
     // 初始化全局模块
-    await apiClient.init();
-    const layout = new LayoutController();
+    await apiClient.init(); // 初始化 API 客户端
+    const layout = new LayoutController(); // 初始化布局控制器（未使用）
 
-    // 指标状态（无假数据，占位符）
+    // 定义仪表盘的主要指标卡片的 key
     const metricKeys = ['deviceInfo', 'deviceTotal', 'topology', 'traffic', 'resource'];
 
     // 示例数据：用于首屏样式预览，真实接口返回后会覆盖
@@ -37,26 +37,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
     };
 
+    // 定义全局状态对象，存储仪表盘的所有状态数据
     const state = {
         deviceInfo: { title: '当前设备', value: demoBasicInfo.data.name, desc: `IP ${demoBasicInfo.data.ip}`, detail: [] },
         deviceTotal: { title: '设备总数', value: '--', desc: '等待数据', detail: [] },
         topology: { title: '网络拓扑', value: '--', desc: '等待数据', detail: [] },
         traffic: { title: '数据流量', value: '--', desc: '等待数据', detail: [] },
         resource: { title: '资源使用', value: '--', desc: '等待数据', detail: [] },
-        node: { type: 'G', autoAvoid: false, autoJoin: false, autoRefresh: false },
+        node: { type: 'G', autoAvoid: false, autoJoin: false, autoRefresh: false }, // 节点状态
     };
 
-    let activeKey = 'deviceInfo';
+    let activeKey = 'deviceInfo'; // 当前选中的卡片 key
 
     // 初始化交互与首屏渲染
-    initNav();
-    bindShortcuts();
-    bindCards();
-    startFooterClock();
-    renderAllCards();
-    selectCard(activeKey);
+    initNav(); // 初始化左侧导航栏
+    bindShortcuts(); // 绑定快捷操作按钮
+    bindCards(); // 绑定卡片的点击与键盘交互
+    startFooterClock(); // 启动底部时钟
+    renderAllCards(); // 渲染所有卡片
+    selectCard(activeKey); // 默认选中第一个卡片
 
-    setupToggles();
+    setupToggles(); // 设置开关按钮的交互逻辑
 
     // 预填示例详情便于首屏展示
     hydrateDeviceDetail(demoBasicInfo.data, true);
@@ -64,6 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 首次拉取当前设备信息
     fetchDeviceBasicInfo();
 
+    /**
+     * 初始化左侧导航栏的交互逻辑
+     */
     function initNav() {
         // 左侧导航仅做选中态切换，实际视图切换可后续扩展
         const nav = document.getElementById('mainNav');
@@ -76,6 +80,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    /**
+     * 绑定快捷操作按钮的点击事件
+     */
     function bindShortcuts() {
         // 侧边“快捷操作”按钮映射到具体回调，当前为占位日志
         const map = {
@@ -89,6 +96,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    /**
+     * 设置开关按钮的交互逻辑
+     */
     function setupToggles() {
         const autoAvoid = document.querySelector('#toggleAutoAvoid input');
         const autoJoin = document.querySelector('#toggleAutoJoin input');
@@ -100,9 +110,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (autoRefresh) autoRefresh.addEventListener('change', () => updateNodeFlags({ autoRefresh: autoRefresh.checked }));
         if (manualScan) manualScan.addEventListener('click', () => console.log('手动扫描触发'));
 
-        applyNodeVisibility();
+        applyNodeVisibility(); // 根据节点类型更新控件的可见性
     }
 
+    /**
+     * 绑定卡片的点击与键盘交互事件
+     */
     function bindCards() {
         // 卡片可点击与键盘可达
         metricKeys.forEach((key) => {
@@ -118,27 +131,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    /**
+     * 选中指定的卡片，并更新详情视图
+     */
     function selectCard(key) {
         activeKey = key;
         metricKeys.forEach((k) => {
             const card = document.querySelector(`[data-card="${k}"]`);
             if (card) card.classList.toggle('is-active', k === key);
         });
-        renderDetail();
+        renderDetail(); // 渲染详情内容
     }
 
+    /**
+     * 渲染所有卡片的主数值与描述
+     */
     function renderAllCards() {
         metricKeys.forEach((key) => updateCard(key));
     }
 
+    /**
+     * 更新指定卡片的主数值与描述
+     */
     function updateCard(key) {
-        // 填充卡片主数值与描述
         const item = state[key];
         if (!item) return;
         setText(`${key}Value`, item.value ?? '--');
         setText(`${key}Desc`, item.desc ?? '');
     }
 
+    /**
+     * 渲染详情视图
+     */
     function renderDetail() {
         const detailContent = document.getElementById('detailContent');
         const detailPlaceholder = document.getElementById('detailPlaceholder');
@@ -199,8 +223,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    /**
+     * 根据节点类型更新控件的可见性
+     */
     function applyNodeVisibility() {
-        // 节点类型驱动的控件显示：G 节点展示“自动避让”，T 节点展示“自动入网/手动扫描”
         const type = state.node.type;
         const autoAvoidWrap = document.getElementById('toggleAutoAvoid');
         const autoJoinWrap = document.getElementById('toggleAutoJoin');
@@ -211,6 +237,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (manualScanBtn) manualScanBtn.classList.toggle('hidden', type !== 'T');
     }
 
+    /**
+     * 更新节点状态并同步 UI
+     */
     function updateNodeFlags(partial) {
         // 合并节点状态并同步 UI
         state.node = { ...state.node, ...partial };
@@ -227,22 +256,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         applyNodeVisibility();
     }
 
+    /**
+     * 启动底部时钟，定时更新时间
+     */
     function startFooterClock() {
         updateFooter();
         setInterval(updateFooter, 60 * 1000);
     }
 
+    /**
+     * 更新底部的时间与版本号
+     */
     function updateFooter() {
         const now = new Date();
         setText('lastUpdated', now.toLocaleString());
         setText('appVersion', 'v0.1.0');
     }
 
+    /**
+     * 设置指定元素的文本内容
+     */
     function setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
     }
 
+    /**
+     * 拉取当前设备的基本信息
+     */
     async function fetchDeviceBasicInfo(nodeId = 0) {
         try {
             const resp = await apiClient.getNodeBasicInfo(nodeId);
@@ -260,6 +301,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    /**
+     * 将后端返回的设备详情数据填充到状态中
+     */
     function hydrateDeviceDetail(data, isDemo = false) {
         // 将后端返回的字段映射到详情卡片。type 0/1 -> G/T 节点。
         const typeLabel = data.type === 0 ? 'G' : 'T';
@@ -292,7 +336,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         applyNodeVisibility();
     }
 
-    // 对外暴露增量更新接口（局部刷新，无假数据）
+    /**
+     * 对外暴露增量更新接口（局部刷新，无假数据）
+     */
     function patchMetrics(partial) {
         if (!partial || typeof partial !== 'object') return;
         Object.entries(partial).forEach(([key, payload]) => {
@@ -308,6 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // 将部分方法暴露到全局，便于外部调用
     window.dashboardPage = {
         patchMetrics,
         selectCard,
