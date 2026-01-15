@@ -2,12 +2,105 @@
     <div class="section-header">
         <div>
             <h1 class="section-title">设备配置</h1>
-            <p class="section-sub">功能建设中，后续将加载设备配置表单与表格</p>
+            <p class="section-sub">管理当前子网 G/T 设备，支持跨节点编辑与控制</p>
+        </div>
+        <div class="section-actions">
+            <button class="ghost-btn" id="refreshDeviceList">刷新列表</button>
         </div>
     </div>
-    <article class="panel">
+
+    <!-- 上半区：设备列表 -->
+    <article class="panel" aria-label="设备列表">
+        <div class="panel-header">
+            <h2>设备列表</h2>
+        </div>
         <div class="panel-body">
-            <div class="empty-tip">设备配置内容即将上线</div>
+            <div class="device-table-wrapper" id="deviceTableWrapper">
+                <table class="device-table" id="deviceTable" aria-label="设备表格">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>IP</th>
+                            <th>信道</th>
+                            <th>物理带宽</th>
+                            <th>业务带宽</th>
+                            <th>固件版本</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deviceTableBody">
+                        <tr class="empty-row">
+                            <td colspan="9">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+
+    <!-- 下半区：基础配置 -->
+    <article class="panel" aria-label="设备基础配置">
+        <div class="panel-header">
+            <h2 id="deviceFormTitle">基础配置</h2>
+            <div class="panel-actions">
+                <button class="ghost-btn" id="toggleAdvanced">高级配置</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="form-grid" id="basicConfig">
+                <div class="form-row">
+                    <label for="fieldId">设备 ID</label>
+                    <input type="text" id="fieldId" readonly />
+                </div>
+                <div class="form-row">
+                    <label for="fieldName">设备名称</label>
+                    <input type="text" id="fieldName" placeholder="请输入设备名称" />
+                </div>
+                <div class="form-row">
+                    <label for="fieldType">设备类型</label>
+                    <select id="fieldType"></select>
+                </div>
+                <div class="form-row">
+                    <label for="fieldIp">IP 地址</label>
+                    <input type="text" id="fieldIp" placeholder="例如 192.168.99.10" />
+                </div>
+                <div class="form-row">
+                    <label for="fieldChannel">信道</label>
+                    <select id="fieldChannel"></select>
+                </div>
+                <div class="form-row">
+                    <label for="fieldBw">物理带宽</label>
+                    <select id="fieldBw"></select>
+                </div>
+                <div class="form-row">
+                    <label for="fieldTfcBw">业务带宽</label>
+                    <select id="fieldTfcBw"></select>
+                </div>
+                <div class="form-row">
+                    <label for="fieldVersion">固件版本</label>
+                    <input type="text" id="fieldVersion" readonly />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="primary-btn" id="btnSaveConfig">保存配置</button>
+            </div>
+            <div class="form-hint" id="formHint"></div>
+        </div>
+    </article>
+
+    <!-- 下半区：高级配置占位 -->
+    <article class="panel" id="advancedConfigPanel" aria-label="设备高级配置" hidden>
+        <div class="panel-header">
+            <h2>高级配置</h2>
+            <div class="panel-actions">
+                <button class="ghost-btn" id="backToBasic">返回基础配置</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="empty-tip">高级配置占位，待提供具体字段后实现。</div>
         </div>
     </article>
 </section>

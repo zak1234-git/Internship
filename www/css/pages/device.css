@@ -1,0 +1,225 @@
+/* 设备配置页样式（在 base.css 基础上做局部增强）
+ * 结构分区：
+ * - device-table-wrapper/device-table：上半区列表（可纵横滚动）；高度、最小宽度在此调节。
+ * - form-grid/form-row/form-actions：下半区表单与按钮区域（栅格列数随断点变化）。
+ * - 工具类：hint/empty-row/loading 等状态样式。
+ */
+
+/* 列表外框：控制可视高度与滚动，max-height 调整列表占比 */
+.device-table-wrapper {
+    overflow: auto;
+    max-height: 180px;
+    border: 1px solid var(--card-border, #e5e7eb);
+    border-radius: 10px;
+    background: var(--card-bg, #fff);
+    width: 100%;
+}
+
+/* 列表表格：min-width 控制出现横向滚动的阈值 */
+.device-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+/* 表头与单元格：间距、边框与不换行行为 */
+.device-table th,
+.device-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border, #e5e7eb);
+    white-space: nowrap;
+}
+
+.device-table thead th {
+    background: var(--muted-bg, #f5f6f8);
+    font-weight: 600;
+    color: var(--text-strong, #111827);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.device-table tbody tr:hover {
+    background: var(--row-hover, rgba(0, 122, 255, 0.06));
+}
+
+/* 操作按钮与高亮态（点击后高亮所在按钮而非整行） */
+.device-table .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 1px solid var(--card-border, #e5e7eb);
+    background: var(--btn-ghost-bg, transparent);
+    cursor: pointer;
+}
+
+.device-table .action-btn.is-active {
+    border-color: var(--primary, #2f7df4);
+    color: var(--primary, #2f7df4);
+    background: rgba(47, 125, 244, 0.08);
+}
+
+.device-table .action-btn.danger {
+    border-color: var(--danger, #dc2626);
+    color: var(--danger, #dc2626);
+}
+
+/* 表单栅格：grid-template-columns 控制下半区列数，断点在文件底部 */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* 表单行：左右分布（标签左，输入右），提升纵向利用率 */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px; /* 如需调整行高，改这里 */
+}
+
+.form-row label {
+    flex: 0 0 120px; /* 标签列宽，可按需调节 */
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-strong, #111827);
+}
+
+.form-row input,
+.form-row select {
+    flex: 1 1 auto;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--card-border, #e5e7eb);
+    border-radius: 8px;
+    background: var(--card-bg, #fff);
+    color: var(--text-normal, #111827);
+}
+
+/* 下半区表单（基础配置）局部微调：加大行间距、标签自适应、输入项拉满 */
+#deviceSection .form-grid {
+    gap: 24px 40px;
+}
+
+#deviceSection .form-row {
+    gap: 12px;
+}
+
+#deviceSection .form-row label {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+#deviceSection .form-row input,
+#deviceSection .form-row select {
+    flex: 1 1 auto;
+}
+
+/* 仅压缩“设备基础配置”面板头部与内边距，不影响列表面板 */
+#deviceSection .panel[aria-label="设备基础配置"] {
+    padding: 12px 18px;
+}
+
+#deviceSection .panel[aria-label="设备基础配置"] .panel-header {
+    margin-bottom: 8px;
+}
+
+#deviceSection .panel[aria-label="设备基础配置"] .panel-header .ghost-btn {
+    padding: 6px 10px;
+}
+
+/* 按钮行：跨所有列，右对齐；可调 justify-content/margin 以改变位置 */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 0;
+    align-items: center;
+    justify-content: flex-end;
+    grid-column: 1 / -1;
+}
+
+/* 下半区按钮行：右对齐并与表单保持更大间距 */
+#deviceSection .form-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+    padding-right: 20px;
+}
+
+/* 下半区面板容器：取消 grid 居中，允许内容撑满宽度 */
+#deviceSection .panel-body {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0;
+}
+
+/* 表单提示文案（当前为空，可按需填充） */
+.form-hint {
+    margin-top: 10px;
+    color: var(--text-muted, #6b7280);
+    font-size: 13px;
+}
+
+/* 小提示文案色 */
+.hint {
+    color: var(--text-muted, #6b7280);
+    font-size: 13px;
+}
+
+/* 空数据行样式 */
+.empty-row td {
+    text-align: center;
+    color: var(--text-muted, #6b7280);
+}
+
+/* 按钮加载态：半透明并带旋转动画 */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+/* 响应式栅格：宽屏 3 列，中屏 2 列，小屏 1 列 */
+@media (min-width: 1200px) {
+    .form-grid {
+        grid-template-columns: repeat(3, minmax(240px, 1fr));
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
