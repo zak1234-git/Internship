@@ -40,67 +40,59 @@
         </div>
     </article>
 
-    <!-- 下半区：基础配置 -->
-    <article class="panel" aria-label="设备基础配置">
-        <div class="panel-header">
-            <h2 id="deviceFormTitle">基础配置</h2>
-            <div class="panel-actions">
-                <button class="ghost-btn" id="toggleAdvanced">高级配置</button>
-            </div>
-        </div>
+    <!-- 下半区：配置选项卡（基础 / 高级） -->
+    <article class="panel" aria-label="设备配置">
         <div class="panel-body">
-            <div class="form-grid" id="basicConfig">
-                <div class="form-row">
-                    <label for="fieldId">设备 ID</label>
-                    <input type="text" id="fieldId" readonly />
-                </div>
-                <div class="form-row">
-                    <label for="fieldName">设备名称</label>
-                    <input type="text" id="fieldName" placeholder="请输入设备名称" />
-                </div>
-                <div class="form-row">
-                    <label for="fieldType">设备类型</label>
-                    <select id="fieldType"></select>
-                </div>
-                <div class="form-row">
-                    <label for="fieldIp">IP 地址</label>
-                    <input type="text" id="fieldIp" placeholder="例如 192.168.99.10" />
-                </div>
-                <div class="form-row">
-                    <label for="fieldChannel">信道</label>
-                    <select id="fieldChannel"></select>
-                </div>
-                <div class="form-row">
-                    <label for="fieldBw">物理带宽</label>
-                    <select id="fieldBw"></select>
-                </div>
-                <div class="form-row">
-                    <label for="fieldTfcBw">业务带宽</label>
-                    <select id="fieldTfcBw"></select>
-                </div>
-                <div class="form-row">
-                    <label for="fieldVersion">固件版本</label>
-                    <input type="text" id="fieldVersion" readonly />
-                </div>
-
-                <div class="form-actions">
-                    <button class="primary-btn" id="btnSaveConfig">保存配置</button>
-                </div>
+            <div class="config-tabs" id="configTabs">
+                <button class="tab-btn is-active" data-tab="basic">基础配置</button>
+                <button class="tab-btn" data-tab="advanced">高级配置</button>
             </div>
-            <div class="form-hint" id="formHint"></div>
-        </div>
-    </article>
 
-    <!-- 下半区：高级配置占位 -->
-    <article class="panel" id="advancedConfigPanel" aria-label="设备高级配置" hidden>
-        <div class="panel-header">
-            <h2>高级配置</h2>
-            <div class="panel-actions">
-                <button class="ghost-btn" id="backToBasic">返回基础配置</button>
+            <div class="config-tab-panel" data-tab="basic">
+                <div class="form-grid" id="basicConfig">
+                    <div class="form-row">
+                        <label for="fieldId">设备 ID</label>
+                        <input type="text" id="fieldId" readonly />
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldName">设备名称</label>
+                        <input type="text" id="fieldName" placeholder="请输入设备名称" />
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldType">设备类型</label>
+                        <select id="fieldType"></select>
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldIp">IP 地址</label>
+                        <input type="text" id="fieldIp" placeholder="例如 192.168.99.10" />
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldChannel">信道</label>
+                        <select id="fieldChannel"></select>
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldBw">物理带宽</label>
+                        <select id="fieldBw"></select>
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldTfcBw">业务带宽</label>
+                        <select id="fieldTfcBw"></select>
+                    </div>
+                    <div class="form-row">
+                        <label for="fieldVersion">固件版本</label>
+                        <input type="text" id="fieldVersion" readonly />
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="primary-btn" id="btnSaveConfig">保存配置</button>
+                    </div>
+                </div>
+                <div class="form-hint" id="formHint"></div>
             </div>
-        </div>
-        <div class="panel-body">
-            <div class="empty-tip">高级配置占位，待提供具体字段后实现。</div>
+
+            <div class="config-tab-panel" data-tab="advanced" hidden>
+                <div class="empty-tip">高级配置占位，待提供具体字段后实现。</div>
+            </div>
         </div>
     </article>
 </section>

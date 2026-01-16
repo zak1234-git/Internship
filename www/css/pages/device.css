@@ -133,12 +133,53 @@
     padding: 30px 20px; /* 扩大内边距，提供呼吸感 */
 }
 
+#deviceSection .panel[aria-label="设备配置"] {
+    padding: 20px 20px 28px; /* 减小上边距让表单更靠近卡片上边界，保留下部呼吸感 */
+}
+
 #deviceSection .panel[aria-label="设备基础配置"] .panel-header {
     margin-bottom: 8px;
 }
 
+#deviceSection .panel[aria-label="设备配置"] .panel-header {
+    margin-bottom: 8px; /* 选项卡面板标题间距 */
+}
+
 #deviceSection .panel[aria-label="设备基础配置"] .panel-header .ghost-btn {
     padding: 6px 10px;
+}
+
+#deviceSection .panel[aria-label="设备配置"] .panel-header .ghost-btn {
+    padding: 6px 10px; /* 预留与基础配置一致的按钮样式（当前未显示） */
+}
+
+.config-tabs {
+    display: inline-flex; /* 横向排列标签按钮 */
+    gap: 8px; /* 标签间距 */
+    margin-bottom: 12px; /* 收紧与表单的距离，靠近上边界 */
+    border-bottom: 1px solid var(--border-soft); /* 底部分隔线强调分组 */
+    padding-bottom: 4px; /* 底部分隔线与标签的间距 */
+}
+
+.config-tabs .tab-btn {
+    padding: 8px 14px; /* 标签按钮内边距，便于点击 */
+    border: 1px solid transparent; /* 默认无边框，保持简洁 */
+    border-radius: 8px; /* 圆角标签按钮 */
+    background: transparent; /* 初始透明背景 */
+    color: var(--text-main); /* 文字使用主题主色 */
+    font-weight: 700; /* 标签文字加粗，与列表标题一致 */
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; /* 平滑过渡 */
+}
+
+.config-tabs .tab-btn.is-active {
+    background: var(--panel-veil); /* 活动态背景，与面板区分 */
+    border-color: var(--border-soft); /* 活动边框强调当前标签 */
+    color: var(--primary); /* 活动态文字主色 */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06); /* 轻微阴影突出当前标签 */
+}
+
+.config-tab-panel {
+    width: 100%; /* 占满面板宽度，避免左右空白 */
 }
 
 /* 按钮行：跨所有列，右对齐；可调 justify-content/margin 以改变位置 */
@@ -258,7 +299,7 @@
 
 @keyframes spin {
     from {
-        transform: rotate(0deg);
+        transform: rotate(0deg); 
     }
     to {
         transform: rotate(360deg);

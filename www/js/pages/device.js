@@ -27,11 +27,10 @@
 
         var tableBody = document.getElementById('deviceTableBody');
         var refreshBtn = document.getElementById('refreshDeviceList');
-        var toggleAdvancedBtn = document.getElementById('toggleAdvanced');
-        var backToBasicBtn = document.getElementById('backToBasic');
-        var advancedPanel = document.getElementById('advancedConfigPanel');
         var basicConfig = document.getElementById('basicConfig');
         var basicPanel = basicConfig ? findClosest(basicConfig, 'article') : null;
+        var tabButtons = document.querySelectorAll('#configTabs .tab-btn');
+        var tabPanels = document.querySelectorAll('.config-tab-panel');
         var formHint = document.getElementById('formHint');
         var toastTimer = null; // 记录 toast 计时器，避免多次点击叠加
 
@@ -58,14 +57,16 @@
         fillSelect(fieldTfcBw, BW_OPTIONS);
 
         if (refreshBtn) refreshBtn.addEventListener('click', loadDeviceList);
-        if (toggleAdvancedBtn) toggleAdvancedBtn.addEventListener('click', function () {
-            if (basicPanel) basicPanel.hidden = true;
-            if (advancedPanel) advancedPanel.hidden = false;
-        });
-        if (backToBasicBtn) backToBasicBtn.addEventListener('click', function () {
-            if (advancedPanel) advancedPanel.hidden = true;
-            if (basicPanel) basicPanel.hidden = false;
-        });
+
+        if (tabButtons && tabButtons.length) {
+            tabButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var tab = btn.getAttribute('data-tab');
+                    switchTab(tab);
+                });
+            });
+            switchTab('basic');
+        }
 
         if (btnSave) btnSave.addEventListener('click', handleSave);
         // 底部重复按钮已移除，仅保留表格内的重启/恢复
@@ -102,7 +103,7 @@
             }
         });
 
-        // 首次加载列表（优先即时渲染 mock，再尝试真实接口）
+        // 首次加载列表
         loadDeviceList();
 
         // 拉取列表：优先请求接口，超时或失败再回退 mock；接口成功则不显示 mock
@@ -417,6 +418,17 @@
         function fakeAsync() {
             return new Promise(function (resolve) {
                 setTimeout(resolve, 1200);
+            });
+        }
+
+        function switchTab(tab) {
+            tabButtons.forEach(function (btn) {
+                var isActive = btn.getAttribute('data-tab') === tab;
+                btn.classList.toggle('is-active', isActive);
+            });
+            tabPanels.forEach(function (panel) {
+                var match = panel.getAttribute('data-tab') === tab;
+                panel.hidden = !match;
             });
         }
     }
