@@ -33,6 +33,7 @@
         var basicConfig = document.getElementById('basicConfig');
         var basicPanel = basicConfig ? findClosest(basicConfig, 'article') : null;
         var formHint = document.getElementById('formHint');
+        var toastTimer = null; // 记录 toast 计时器，避免多次点击叠加
 
         var fieldId = document.getElementById('fieldId');
         var fieldName = document.getElementById('fieldName');
@@ -290,7 +291,7 @@
             saveNode(payload).then(function () {
                 mergeToList(payload);
                 fillForm(findById(state.list, payload.id));
-                showHint('保存成功');
+                showToast('保存成功'); // 保存成功后浮层提示，避免撑开页面
                 setLoading(btnSave, false);
 
                 if (current && payload.ip !== current.ip && payload.id === 0) {
@@ -372,8 +373,33 @@
 
         // 底部提示文案
         function showHint(text) {
-            if (!formHint) return;
-            formHint.textContent = text || '';
+            if (!text) {
+                if (formHint) formHint.textContent = ''; // 清空旧文案，避免残留
+                return;
+            }
+            showToast(text); // 将提示统一交给 toast 展示，避免撑开布局
+        }
+
+        // 顶部悬浮提示：用于展示保存成功等反馈
+        function showToast(message) {
+            var toast = getToastElement(); // 获取或创建 toast 容器
+            toast.textContent = message || ''; // 写入提示文字
+            toast.classList.add('show'); // 触发展示动画
+            if (toastTimer) clearTimeout(toastTimer); // 清理上一次定时器，避免提前隐藏
+            toastTimer = setTimeout(function () {
+                toast.classList.remove('show'); // 超时后隐藏提示
+            }, 3000);
+        }
+
+        // 创建并缓存 toast 节点，确保多次调用复用同一元素
+        function getToastElement() {
+            var toast = document.getElementById('toastMessage'); // 尝试获取已有 toast
+            if (!toast) {
+                toast = document.createElement('div'); // 创建新的 toast 容器
+                toast.id = 'toastMessage'; // 设定 ID 供样式选择与复用
+                document.body.appendChild(toast); // 挂载到 body，保证固定定位可用
+            }
+            return toast;
         }
 
         function setLoading(btn, on) {

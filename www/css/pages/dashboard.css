@@ -348,6 +348,41 @@
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.detail-list.is-topology {
+    display: block;
+}
+
+.topology-table-wrapper {
+    overflow: auto;
+    width: 100%;
+    grid-column: 1 / -1;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08);
+}
+
+.topology-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.topology-table th,
+.topology-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+    color: var(--text-main);
+}
+
+.topology-table thead th {
+    background: var(--bg-elevated);
+    font-weight: 600;
+}
+
 @media (min-width: 900px) {
     .detail-list {
         grid-template-columns: repeat(2, 1fr);
@@ -465,7 +500,7 @@
     }
 
     .metrics-grid > article {
-        flex: 1 1 240px;
+        flex: 1 1 200px;
     }
 }
 

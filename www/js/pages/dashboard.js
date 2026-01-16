@@ -6,6 +6,18 @@
     let state = null;
     let activeKey = 'deviceInfo';
     const metricKeys = ['deviceInfo', 'deviceTotal', 'topology', 'traffic', 'resource'];
+    const buildDemoTopology = (basic) => [
+        {
+            id: basic.id ?? 0,
+            name: basic.name || 'Gnode_00',
+            type: basic.type ?? 0,
+            ip: basic.ip || '192.168.99.10',
+            channel: basic.channel ?? 2479,
+            bw: basic.bw ?? 40,
+            tfc_bw: basic.tfc_bw ?? 20,
+            version: basic.version || 'v1.1.23_123.B215',
+        },
+    ];
 
     /**
      * 初始化仪表盘 section，需在片段插入 DOM 后调用
@@ -37,7 +49,7 @@
         state = {
             deviceInfo: { title: '当前设备', value: demoBasicInfo.data.name, desc: `IP ${demoBasicInfo.data.ip}`, detail: [] },
             deviceTotal: { title: '设备总数', value: '--', desc: '等待数据', detail: [] },
-            topology: { title: '网络拓扑', value: '--', desc: '等待数据', detail: [] },
+            topology: { title: '网络拓扑', value: '--', desc: '等待数据', detail: [], nodes: [] },
             traffic: { title: '数据流量', value: '--', desc: '等待数据', detail: [] },
             resource: { title: '资源使用', value: '--', desc: '等待数据', detail: [] },
             node: { type: 'G', autoAvoid: false, autoJoin: false, autoRefresh: false },
@@ -52,6 +64,7 @@
         selectCard(activeKey);
 
         hydrateDeviceDetail(demoBasicInfo.data, true);
+        hydrateTopologyDetail(buildDemoTopology(demoBasicInfo.data), true);
         fetchDeviceBasicInfo();
 
         initialized = true;
@@ -131,52 +144,120 @@
         const item = state[activeKey];
         if (!item || !detailContent || !detailPlaceholder || !detailPrimary || !detailList || !detailTitle) return;
 
-        if (activeKey !== 'deviceInfo') {
-            detailTitle.textContent = `${item.title} · 详情`;
-            detailPlaceholder.hidden = false;
-            detailContent.hidden = true;
-            detailPrimary.textContent = '--';
-            detailList.innerHTML = '';
-            return;
-        }
+        detailList.classList.remove('is-topology');
 
-        const hasDetail = item.detail && item.detail.length > 0;
-        const titleSuffix = activeKey === 'deviceInfo' ? '具体信息' : '详情';
-        detailTitle.textContent = `${item.title} · ${titleSuffix}`;
+        if (activeKey === 'deviceInfo') {
+            const hasDetail = item.detail && item.detail.length > 0;
+            detailTitle.textContent = `${item.title} · 具体信息`;
 
-        if (!hasDetail) {
-            detailPlaceholder.hidden = false;
-            detailContent.hidden = true;
-            return;
-        }
-
-        detailPlaceholder.hidden = true;
-        detailContent.hidden = false;
-        detailPrimary.textContent = item.value ?? '--';
-        detailList.innerHTML = '';
-
-        item.detail.forEach((row) => {
-            const div = document.createElement('div');
-            div.className = 'detail-item';
-
-            if (typeof row === 'string') {
-                div.textContent = row;
-                detailList.appendChild(div);
+            if (!hasDetail) {
+                detailPlaceholder.hidden = false;
+                detailContent.hidden = true;
                 return;
             }
 
-            const labelSpan = document.createElement('span');
-            labelSpan.className = 'detail-label';
-            labelSpan.textContent = row.label || '项';
+            detailPlaceholder.hidden = true;
+            detailContent.hidden = false;
+            detailPrimary.textContent = item.value ?? '--';
+            detailList.innerHTML = '';
 
-            const valueSpan = document.createElement('span');
-            valueSpan.className = 'detail-value';
-            valueSpan.textContent = row.value || '--';
+            item.detail.forEach((row) => {
+                const div = document.createElement('div');
+                div.className = 'detail-item';
 
-            div.appendChild(labelSpan);
-            div.appendChild(valueSpan);
-            detailList.appendChild(div);
-        });
+                if (typeof row === 'string') {
+                    div.textContent = row;
+                    detailList.appendChild(div);
+                    return;
+                }
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'detail-label';
+                labelSpan.textContent = row.label || '项';
+
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'detail-value';
+                valueSpan.textContent = row.value || '--';
+
+                div.appendChild(labelSpan);
+                div.appendChild(valueSpan);
+                detailList.appendChild(div);
+            });
+            return;
+        }
+
+        if (activeKey === 'topology') {
+            const nodes = item.nodes || [];
+            detailTitle.textContent = `${item.title} · 节点列表`;
+            detailPrimary.textContent = nodes.length ? `${nodes.length} 台设备` : '--';
+            detailList.classList.add('is-topology');
+
+            if (!nodes.length) {
+                detailPlaceholder.hidden = false;
+                detailContent.hidden = true;
+                detailList.innerHTML = '';
+                return;
+            }
+
+            detailPlaceholder.hidden = true;
+            detailContent.hidden = false;
+            detailList.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'topology-table-wrapper';
+            const table = document.createElement('table');
+            table.className = 'topology-table';
+
+            const columns = [
+                { key: 'id', label: 'ID' },
+                { key: 'name', label: '名称' },
+                { key: 'type', label: '类型' },
+                { key: 'ip', label: 'IP' },
+                { key: 'channel', label: '信道' },
+                { key: 'bw', label: '物理带宽' },
+                { key: 'tfc_bw', label: '业务带宽' },
+                { key: 'version', label: '固件版本' },
+            ];
+
+            const thead = document.createElement('thead');
+            const headRow = document.createElement('tr');
+            columns.forEach((col) => {
+                const th = document.createElement('th');
+                th.textContent = col.label;
+                headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
+
+            const tbody = document.createElement('tbody');
+            nodes.forEach((node) => {
+                const tr = document.createElement('tr');
+                columns.forEach((col) => {
+                    const td = document.createElement('td');
+                    if (col.key === 'type') {
+                        td.textContent = node.type === 0 ? 'G 节点' : 'T 节点';
+                    } else if (col.key === 'bw' || col.key === 'tfc_bw') {
+                        const val = node[col.key];
+                        td.textContent = val != null ? `${val}M` : '--';
+                    } else {
+                        td.textContent = node[col.key] != null ? node[col.key] : '--';
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            wrapper.appendChild(table);
+            detailList.appendChild(wrapper);
+            return;
+        }
+
+        detailTitle.textContent = `${item.title} · 详情`;
+        detailPlaceholder.hidden = false;
+        detailContent.hidden = true;
+        detailPrimary.textContent = '--';
+        detailList.innerHTML = '';
     }
 
     function applyNodeVisibility() {
@@ -270,11 +351,32 @@
         applyNodeVisibility();
     }
 
+    function hydrateTopologyDetail(nodes, isDemo = false) {
+        if (!state) return;
+        const list = Array.isArray(nodes) ? nodes : [];
+        const count = list.length;
+        state.topology = {
+            ...state.topology,
+            value: count ? `${count} 台` : '--',
+            desc: isDemo ? '示例拓扑' : count ? `节点数 ${count}` : '暂无节点',
+            nodes: list,
+            isDemo,
+        };
+        updateCard('topology');
+        if (activeKey === 'topology') renderDetail();
+    }
+
     function patchMetrics(partial) {
         if (!state || !partial || typeof partial !== 'object') return;
         Object.entries(partial).forEach(([key, payload]) => {
             if (!state[key]) return;
+            if (key === 'topology' && payload.nodes) {
+                hydrateTopologyDetail(payload.nodes, false);
+                return;
+            }
+
             state[key] = { ...state[key], ...payload };
+
             if (metricKeys.includes(key)) {
                 updateCard(key);
                 if (key === activeKey) renderDetail();
