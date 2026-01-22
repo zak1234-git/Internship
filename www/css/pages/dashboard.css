@@ -1,599 +1,190 @@
-/* 仪表盘专用样式
- * 聚焦侧边栏、顶部栏、详情面板、开关等局部组件样式。 
+/*
+ * 仪表盘页面样式
+ * 说明：指标卡、详情面板、拓扑表格与顶部开关的定制样式。
  */
 
-/* 侧边栏样式：设置背景色、边框、布局、间距和文字颜色，增强视觉分隔与层次感 */
-.sidebar {
-    background: var(--sidebar-bg); 
-    border-right: 1px solid var(--sidebar-border); 
-    display: flex; 
-    flex-direction: column; /* 垂直排列子元素 */
-    padding: 16px 12px; /* 内边距 */
-    gap: 14px; /* 子元素间距 */
-    color: var(--sidebar-text); 
-    box-shadow: inset -1px 0 0 rgba(0,0,0,0.02); /* 内阴影 */
-}
+/* 面板标题字号 */
+.panel-header h2 { font-size: 17px; }
 
-/* 移动端抽屉遮罩，配合 drawer-open class 控制显示 */
-.drawer-mask { 
-    position: fixed; /* 固定定位，确保遮罩覆盖整个屏幕 */
-    inset: 0; /* 设置遮罩覆盖整个视口 */
-    background: rgba(0,0,0,0.35); /* 半透明黑色背景，营造遮罩效果 */
-    display: none; /* 默认隐藏遮罩 */
-    z-index: 15; /* 设置较高的层级，确保遮罩覆盖其他内容 */
-}
-
-.app-shell.drawer-open .drawer-mask {
-    display: block; /* 当抽屉打开时，显示遮罩层 */
-}
-
-/* 侧边品牌区：Logo + 折叠按钮，支持折叠态重新排布 */
-.sidebar__brand {
-    display: grid; /* 使用 grid 布局，方便对齐 logo 和折叠按钮 */
-    grid-template-columns: auto 1fr auto; /* 定义三列布局：左侧 logo，中间空白，右侧折叠按钮 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 10px; /* 子元素之间的间距为 10px */
-    padding: 12px; /* 设置内边距，增加内容与边框的间距 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    background: var(--panel-veil); /* 设置背景颜色，使用全局变量 --panel-veil，增强视觉层次 */
-    border: 1px solid var(--sidebar-border); /* 添加边框，使用全局变量 --sidebar-border，增强分隔感 */
-    box-shadow: 0 8px 24px rgba(31, 41, 55, 0.08); /* 添加阴影，增强立体感 */
-}
-
-.brand-logo {
-    width: 48px; /* 设置 logo 的宽度为 48px */
-    height: 48px; /* 设置 logo 的高度为 48px，确保为正方形 */
-    border-radius: 14px; /* 设置圆角，增强视觉柔和感 */
-    border: 1px dashed rgba(47, 125, 244, 0.35); /* 添加虚线边框，使用半透明蓝色，增强装饰性 */
-    background: rgba(47, 125, 244, 0.08); /* 设置背景颜色，使用半透明蓝色，增加层次感 */
-}
-
-/* 品牌位：星闪长方形 Logo，自适应宽高比并去除占位描边 */
-.brand-logo--image {
-    width: clamp(88px, 14vw, 150px); /* 设置宽度范围，支持响应式设计，最小 88px，最大 150px */
-    height: clamp(36px, 6vw, 64px); /* 设置高度范围，支持响应式设计，最小 36px，最大 64px */
-    aspect-ratio: 2.6 / 1; /* 确保 logo 的宽高比为 2.6:1，避免变形 */
-    background-image: url('../../assets/星闪.png'); /* 设置背景图片为星闪 logo */
-    background-size: contain; /* 确保图片完整显示，不拉伸或裁剪 */
-    background-repeat: no-repeat; /* 禁止背景图片重复 */
-    background-position: center; /* 将背景图片居中显示 */
-    background-color: transparent; /* 背景透明，避免遮挡其他内容 */
-    border: none; /* 移除边框，保持简洁 */
-    box-shadow: none; /* 移除阴影，避免干扰视觉效果 */
-}
-
-.brand-text { display: none; /* 默认隐藏品牌文字，仅显示 logo */ }
-
-.sidebar__collapse {
-    justify-self: end; /* 将折叠按钮对齐到右侧 */
-}
-
-.app-shell.sidebar-collapsed .sidebar__brand {
-    grid-template-columns: auto; /* 折叠状态下仅显示 logo，隐藏其他内容 */
-    padding: 10px; /* 减小内边距，适配折叠状态 */
-}
-
-.app-shell.sidebar-collapsed .brand-logo {
-    display: none; /* 折叠状态下隐藏 logo */
-}
-
-.app-shell.sidebar-collapsed .sidebar__collapse {
-    justify-self: start; /* 折叠状态下将折叠按钮对齐到左侧 */
-}
-
-/* 左侧导航列表：通过 .menu-item active 状态高亮 */
-.sidebar__menu {
-    display: flex; /* 使用 flex 布局，方便垂直排列导航项 */
-    flex-direction: column; /* 子元素垂直排列 */
-    gap: 6px; /* 子元素之间的间距为 6px */
-}
-
-/* 单个导航项，使用 grid 对齐图标与文本 */
-.menu-item {
-    display: grid; /* 使用 grid 布局，方便对齐图标与文本 */
-    grid-template-columns: 24px 1fr; /* 定义两列布局：左侧图标，右侧文本 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 10px; /* 图标与文本之间的间距为 10px */
-    padding: 12px 14px; /* 设置内边距，增加点击区域 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    color: var(--sidebar-muted); /* 设置文字颜色，使用全局变量 --sidebar-muted */
-    border: 1px solid transparent; /* 默认无边框，增强 hover 效果 */
-    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition); /* 添加过渡效果，提升交互体验 */
-}
-
-.menu-item .menu-label {
-    white-space: nowrap; /* 禁止文本换行，保持单行显示 */
-}
-
-.menu-item.active,
-.menu-item:hover {
-    color: var(--sidebar-text); /* 激活或悬停时，文字颜色变为全局变量 --sidebar-text */
-    background: rgba(47, 125, 244, 0.12); /* 设置背景颜色，使用半透明蓝色，突出显示 */
-    border-color: rgba(47, 125, 244, 0.25); /* 添加边框颜色，增强视觉层次 */
-    box-shadow: 0 8px 16px rgba(47, 125, 244, 0.12); /* 添加阴影，增强立体感 */
-}
-
-/* 导航小图标容器，使用渐变与描边提升立体感 */
-.menu-icon {
-    display: grid; /* 使用 grid 布局，方便图标居中对齐 */
-    place-items: center; /* 图标水平垂直居中 */
-    width: 22px; /* 设置图标容器宽度为 22px */
-    height: 22px; /* 设置图标容器高度为 22px，确保为正方形 */
-    line-height: 1; /* 设置行高为 1，避免文字溢出 */
-    font-size: 16px; /* 设置图标字体大小为 16px */
-    border-radius: 8px; /* 设置圆角，增强视觉柔和感 */
-    color: var(--sidebar-text); /* 设置图标颜色，使用全局变量 --sidebar-text */
-    background: linear-gradient(135deg, rgba(47, 125, 244, 0.18), rgba(34, 197, 94, 0.08)); /* 添加渐变背景，增强装饰性 */
-    border: 1px solid var(--sidebar-border); /* 添加边框，使用全局变量 --sidebar-border，增强分隔感 */
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); /* 添加内阴影，增强立体感 */
-}
-
-/* 侧边栏底部的快捷操作区域 */
-.sidebar__section {
-    padding: 12px 10px; /* 设置内边距，增加内容与边框的间距 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    border: 1px solid var(--sidebar-border); /* 添加边框，使用全局变量 --sidebar-border，增强分隔感 */
-    background: var(--panel-veil); /* 设置背景颜色，使用全局变量 --panel-veil，增强视觉层次 */
-    display: grid; /* 使用 grid 布局，方便排列快捷按钮 */
-    gap: 10px; /* 子元素之间的间距为 10px */
-}
-
-.section-title {
-    font-size: 13px; /* 设置标题字体大小为 13px */
-    color: var(--sidebar-muted); /* 设置标题颜色，使用全局变量 --sidebar-muted */
-}
-
-.shortcut-group {
-    display: grid; /* 使用 grid 布局，方便排列快捷按钮 */
-    gap: 8px; /* 子元素之间的间距为 8px */
-}
-
-/* 快捷按钮：无图标的文本按钮，悬停强调边框与阴影 */
-.shortcut-btn {
-    padding: 10px 12px; /* 设置内边距，增加点击区域 */
-    border-radius: var(--radius-sm); /* 设置圆角，增强视觉柔和感 */
-    border: 1px solid var(--sidebar-border); /* 添加边框，使用全局变量 --sidebar-border，增强分隔感 */
-    background: var(--panel-veil-soft); /* 设置背景颜色，使用全局变量 --panel-veil-soft，增强视觉层次 */
-    color: var(--sidebar-text); /* 设置文字颜色，使用全局变量 --sidebar-text */
-    text-align: left; /* 文本左对齐 */
-    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition); /* 添加过渡效果，提升交互体验 */
-}
-
-.shortcut-btn:hover {
-    border-color: rgba(47, 125, 244, 0.35); /* 悬停时边框颜色变为半透明蓝色 */
-    background: rgba(47, 125, 244, 0.12); /* 悬停时背景颜色变为半透明蓝色，突出显示 */
-    box-shadow: 0 8px 16px rgba(47, 125, 244, 0.12); /* 悬停时添加阴影，增强立体感 */
-}
-
-/* 顶部栏：固定在内容区顶部，含抽屉开关 / 品牌 / 用户信息 */
-.topbar {
-    display: flex; /* 使用 flex 布局，方便排列顶部元素 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    justify-content: space-between; /* 子元素之间均匀分布，首尾对齐 */
-    padding: 14px 18px; /* 设置内边距，增加内容与边框的间距 */
-    border-bottom: 1px solid var(--glass-border); /* 底部边框，使用全局变量 --glass-border，增强分隔感 */
-    background: var(--panel-veil); /* 设置背景颜色，使用全局变量 --panel-veil，增强视觉层次 */
-    position: sticky; /* 固定在视口顶部，随滚动条滚动 */
-    top: 0; /* 顶部距离为 0 */
-    z-index: 10; /* 设置较高的层级，确保顶部栏在其他内容之上 */
-    backdrop-filter: blur(10px); /* 背景模糊，增强层次感 */
-}
-
-.topbar__left {
-    display: flex; /* 使用 flex 布局，方便排列左侧元素 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 12px; /* 子元素之间的间距为 12px */
-}
-
-/* 小屏下显示的汉堡按钮，桌面端隐藏 */
-.topbar__menu {
-    display: none; /* 默认隐藏汉堡按钮 */
-}
-
-/* 顶部品牌标题区，支持双击回到仪表盘（仅保留文字，不再占位 Logo） */
-.brand {
-    display: inline-flex; /* 使用 inline-flex 布局，支持文本与图标水平排列 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 8px; /* 子元素之间的间距为 8px */
-    cursor: pointer; /* 鼠标悬停时显示手型光标 */
-}
-
-.brand-name {
-    font-weight: 800; /* 设置字体加粗，增强视觉冲击力 */
-    letter-spacing: 0.5px; /* 字母间距为 0.5px，增加可读性 */
-}
-
-.topbar__right {
-    display: flex; /* 使用 flex 布局，方便排列右侧元素 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 12px; /* 子元素之间的间距为 12px */
-}
-
-/* 用户菜单整体容器，包含触发按钮与下拉列表 */
-.user-menu {
-    position: relative; /* 相对定位，为绝对定位的子元素提供参考 */
-}
-
-.user-trigger {
-    display: grid; /* 使用 grid 布局，方便对齐用户头像与信息 */
-    grid-template-columns: auto 1fr auto; /* 定义三列布局：左侧头像，中间用户信息，右侧箭头 */
-    gap: 8px; /* 子元素之间的间距为 8px */
-    align-items: center; /* 垂直居中对齐子元素 */
-    padding: 8px 10px; /* 设置内边距，增加点击区域 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-    background: var(--panel-veil-strong); /* 设置背景颜色，使用全局变量 --panel-veil-strong，增强视觉层次 */
-    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition); /* 添加过渡效果，提升交互体验 */
-}
-
-.user-trigger:hover {
-    border-color: var(--primary); /* 悬停时边框颜色变为全局变量 --primary */
-    background: rgba(47, 125, 244, 0.06); /* 悬停时背景颜色变为半透明蓝色，突出显示 */
-    box-shadow: 0 10px 20px rgba(47, 125, 244, 0.12); /* 悬停时添加阴影，增强立体感 */
-}
-
-.avatar {
-    width: 36px; /* 设置头像宽度为 36px */
-    height: 36px; /* 设置头像高度为 36px，确保为正方形 */
-    border-radius: 12px; /* 设置圆角，增强视觉柔和感 */
-    background: linear-gradient(135deg, rgba(47, 125, 244, 0.4), rgba(34, 197, 94, 0.2)); /* 添加渐变背景，增强立体感 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-}
-
-.user-meta {
-    display: grid; /* 使用 grid 布局，方便排列用户信息 */
-    gap: 2px; /* 子元素之间的间距为 2px */
-}
-
-.user-name {
-    font-weight: 700; /* 设置字体加粗，增强视觉冲击力 */
-}
-
-.user-role {
-    color: var(--text-muted); /* 设置角色文字颜色，使用全局变量 --text-muted */
-    font-size: 12px; /* 设置角色字体大小为 12px */
-}
-
-.chevron {
-    width: 10px; /* 设置箭头宽度为 10px */
-    height: 10px; /* 设置箭头高度为 10px */
-    border-right: 2px solid currentColor; /* 右侧边框为当前文字颜色，形成箭头效果 */
-    border-bottom: 2px solid currentColor; /* 下侧边框为当前文字颜色，形成箭头效果 */
-    transform: rotate(45deg); /* 旋转 45 度，形成指向右下角的箭头 */
-}
-
-/* 用户下拉菜单：默认隐藏，.open 时显示为网格 */
-.user-dropdown {
-    position: absolute; /* 绝对定位，脱离文档流 */
-    right: 0; /* 右侧对齐 */
-    top: calc(100% + 8px); /* 顶部距离触发按钮底部 8px */
-    background: var(--bg-elevated); /* 设置背景颜色，使用全局变量 --bg-elevated，增强视觉层次 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    box-shadow: var(--shadow-soft); /* 添加阴影，增强立体感 */
-    padding: 6px; /* 设置内边距，增加内容与边框的间距 */
-    display: none; /* 默认隐藏下拉菜单 */
-    min-width: 180px; /* 设置最小宽度，避免内容过窄 */
-    z-index: 15; /* 设置较高的层级，确保下拉菜单在其他内容之上 */
-}
-
-.user-dropdown.open {
-    display: grid; /* 打开时使用网格布局，方便排列菜单项 */
-    gap: 4px; /* 子元素之间的间距为 4px */
-}
-
-.dropdown-item {
-    text-align: left; /* 文本左对齐 */
-    padding: 10px 12px; /* 设置内边距，增加点击区域 */
-    border-radius: var(--radius-sm); /* 设置圆角，增强视觉柔和感 */
-    transition: background var(--transition); /* 添加过渡效果，提升交互体验 */
-}
-
-.dropdown-item:hover {
-    background: rgba(47, 125, 244, 0.12); /* 悬停时背景颜色变为半透明蓝色，突出显示 */
-}
-
-.dropdown-item.danger {
-    color: var(--danger); /* 设置危险操作文字颜色，使用全局变量 --danger */
-}
-
-/* 主内容区背景与内边距 */
-.content {
-    padding: 18px; /* 设置内边距，增加内容与边框的间距 */
-    overflow: auto; /* 超出部分可滚动 */
-    background: var(--panel-veil-strong); /* 设置背景颜色，使用全局变量 --panel-veil-strong，增强视觉层次 */
-}
-
-.panel-header h2 {
-    font-size: 17px; /* 设置面板标题字体大小为 17px */
-}
-
-/* 卡片选中态：用于当前激活指标卡片 */
+/* 卡片激活态样式 */
 .card.is-active {
-    border-color: rgba(47, 125, 244, 0.4); /* 选中时边框颜色变为半透明蓝色 */
-    box-shadow: 0 16px 30px rgba(47, 125, 244, 0.18); /* 选中时添加阴影，增强立体感 */
+    border-color: rgba(47, 125, 244, 0.4);
+    box-shadow: 0 16px 30px rgba(47, 125, 244, 0.18);
 }
 
-.card { cursor: pointer; /* 鼠标悬停时显示手型光标 */ }
+/* 卡片鼠标形态 */
+.card { cursor: pointer; }
 
-/* 详情面板主体：居中占位与网格详情列表 */
+/* 详情面板主体：网格容器 */
 .detail-body {
-    width: 100%; /* 宽度 100% */
-    min-height: 320px; /* 最小高度 320px，确保足够显示内容 */
-    display: grid; /* 使用 grid 布局，方便排列详情项 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    justify-items: stretch; /* 水平拉伸子元素，填满可用空间 */
-    padding: 16px 18px 18px; /* 设置内边距，增加内容与边框的间距 */
-    gap: 12px; /* 子元素之间的间距为 12px */
-    box-sizing: border-box; /* 包含内边距和边框在内的总宽高计算方式 */
+    width: 100%;
+    min-height: 320px;
+    display: grid;
+    align-items: center;
+    justify-items: stretch;
+    padding: 16px 18px 18px;
+    gap: 12px;
+    box-sizing: border-box;
 }
 
+/* 详情占位文案 */
 .detail-placeholder {
-    color: var(--text-muted); /* 设置占位符文字颜色，使用全局变量 --text-muted */
-    text-align: center; /* 文本居中对齐 */
-    padding: 60px 12px; /* 设置内边距，增加内容与边框的间距 */
+    color: var(--text-muted);
+    text-align: center;
+    padding: 60px 12px;
 }
 
+/* 详情内容网格 */
 .detail-content {
-    display: grid; /* 使用 grid 布局，方便排列详情项 */
-    gap: 14px; /* 子元素之间的间距为 14px */
-    color: var(--text-main); /* 设置文字颜色，使用全局变量 --text-main */
+    display: grid;
+    gap: 14px;
+    color: var(--text-main);
 }
 
-.detail-primary {
-    display: none; /* 默认隐藏主内容，仅在需要时显示 */
-}
+/* 详情主字段：默认隐藏 */
+.detail-primary { display: none; }
 
-/* 详情字段网格，自动换行适配不同屏幕宽度 */
+/* 详情列表：自适应列数 */
 .detail-list {
-    display: grid; /* 使用 grid 布局，方便排列详情项 */
-    gap: clamp(16px, 2.5vw, 32px); /* 子元素之间的间距为 16px，支持响应式设计 */
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* 自适应列数，最小 260px，最大 1fr */
+    display: grid;
+    gap: clamp(16px, 2.5vw, 32px);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-.detail-list.is-topology {
-    display: block; /* 拓扑图模式下，强制使用块级布局 */
-}
+/* 拓扑模式：单列显示 */
+.detail-list.is-topology { display: block; }
 
+/* 拓扑表格外框 */
 .topology-table-wrapper {
-    overflow: auto; /* 超出部分可滚动 */
-    width: 100%; /* 宽度 100% */
-    grid-column: 1 / -1; /* 跨越所有列 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    background: var(--bg-surface); /* 设置背景颜色，使用全局变量 --bg-surface，增强视觉层次 */
-    box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08); /* 添加阴影，增强立体感 */
+    overflow: auto;
+    width: 100%;
+    grid-column: 1 / -1;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08);
 }
 
+/* 拓扑表格主体 */
 .topology-table {
-    width: 100%; /* 宽度 100% */
-    min-width: 720px; /* 设置最小宽度，避免内容过窄 */
-    border-collapse: collapse; /* 边框合并模式，避免双重边框 */
-    font-size: 14px; /* 设置字体大小为 14px */
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 
+/* 拓扑表格单元格 */
 .topology-table th,
 .topology-table td {
-    padding: 10px 12px; /* 设置内边距，增加点击区域 */
-    text-align: left; /* 文本左对齐 */
-    border-bottom: 1px solid var(--border-soft); /* 底部边框，使用全局变量 --border-soft，增强分隔感 */
-    white-space: nowrap; /* 禁止文本换行，保持单行显示 */
-    color: var(--text-main); /* 设置文字颜色，使用全局变量 --text-main */
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+    color: var(--text-main);
 }
 
+/* 拓扑表头样式 */
 .topology-table thead th {
-    background: var(--bg-elevated); /* 表头背景颜色，使用全局变量 --bg-elevated，增强视觉层次 */
-    font-weight: 600; /* 设置字体加粗，增强视觉冲击力 */
+    background: var(--bg-elevated);
+    font-weight: 600;
 }
 
+/* 中屏以上两列详情 */
 @media (min-width: 900px) {
-    .detail-list {
-        grid-template-columns: repeat(2, 1fr); /* 大于 900px 时，设置为两列布局 */
-    }
+    .detail-list { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* 大屏三列详情 */
 @media (min-width: 1280px) {
-    .detail-list {
-        grid-template-columns: repeat(3, 1fr); /* 大于 1280px 时，设置为三列布局 */
-    }
+    .detail-list { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* 单条详情：左右分布 label/value，使用渐变背景 */
+/* 单条详情块 */
 .detail-item {
-    display: flex; /* 使用 flex 布局，方便左右分布 label 和 value */
-    align-items: center; /* 垂直居中对齐子元素 */
-    justify-content: space-between; /* 子元素之间均匀分布，首尾对齐 */
-    gap: 12px; /* 子元素之间的间距为 12px */
-    padding: 16px 20px; /* 设置内边距，增加内容与边框的间距 */
-    border-radius: var(--radius-md); /* 设置圆角，增强视觉柔和感 */
-    background: linear-gradient(135deg, rgba(47, 125, 244, 0.08), rgba(34, 197, 94, 0.05)); /* 添加渐变背景，增强立体感 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-    box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08); /* 添加阴影，增强立体感 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(47, 125, 244, 0.08), rgba(34, 197, 94, 0.05));
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08);
 }
 
+/* 详情标签文字 */
 .detail-label {
-    color: var(--text-muted); /* 设置标签文字颜色，使用全局变量 --text-muted */
-    font-weight: 600; /* 设置字体加粗，增强视觉冲击力 */
+    color: var(--text-muted);
+    font-weight: 600;
 }
 
+/* 详情值文字 */
 .detail-value {
-    color: var(--text-main); /* 设置数值文字颜色，使用全局变量 --text-main */
-    font-weight: 700; /* 设置字体加粗，增强视觉冲击力 */
-    text-align: right; /* 文本右对齐 */
-    word-break: break-all; /* 单词换行，避免溢出 */
+    color: var(--text-main);
+    font-weight: 700;
+    text-align: right;
+    word-break: break-all;
 }
 
-/* 详情面板右上角的操作区预留（当前未使用） */
-.panel-actions {
-    display: flex; /* 使用 flex 布局，方便排列操作按钮 */
-    gap: 8px; /* 子元素之间的间距为 8px */
-}
+/* 面板动作区域预留 */
+.panel-actions { display: flex; gap: 8px; }
 
-/* 顶部开关组：自动避让/入网/刷新，支持换行 */
+/* 开关组容器 */
 .toggle-group {
-    display: flex; /* 使用 flex 布局，方便排列开关按钮 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 10px; /* 子元素之间的间距为 10px */
-    flex-wrap: wrap; /* 超出部分换行 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-/* 自定义开关组件：label + slider */
+/* 自定义开关外壳 */
 .switch {
-    display: inline-flex; /* 使用 inline-flex 布局，支持 label 与 slider 水平排列 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    gap: 8px; /* 子元素之间的间距为 8px */
-    padding: 6px 8px; /* 设置内边距，增加点击区域 */
-    border: 1px solid var(--border-soft); /* 添加边框，使用全局变量 --border-soft，增强分隔感 */
-    border-radius: var(--radius-sm); /* 设置圆角，增强视觉柔和感 */
-    background: var(--panel-veil); /* 设置背景颜色，使用全局变量 --panel-veil，增强视觉层次 */
-    cursor: pointer; /* 鼠标悬停时显示手型光标 */
-    user-select: none; /* 禁止用户选中，避免干扰交互体验 */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: var(--panel-veil);
+    cursor: pointer;
+    user-select: none;
 }
 
-.switch input { display: none; /* 隐藏原生 checkbox 输入框 */ }
+/* 隐藏原生 checkbox */
+.switch input { display: none; }
 
 /* 开关滑轨 */
 .slider {
-    position: relative; /* 相对定位，为伪元素提供定位参考 */
-    width: 32px; /* 设置滑轨宽度为 32px */
-    height: 18px; /* 设置滑轨高度为 18px */
-    border-radius: 999px; /* 设置圆角，形成椭圆形状 */
-    background: var(--border-soft); /* 设置背景颜色，使用全局变量 --border-soft，增强视觉层次 */
-    transition: background var(--transition); /* 添加过渡效果，提升交互体验 */
+    position: relative;
+    width: 32px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--border-soft);
+    transition: background var(--transition);
 }
 
+/* 开关滑块 */
 .slider::after {
-    content: ''; /* 伪元素内容为空 */
-    position: absolute; /* 绝对定位，脱离文档流 */
-    top: 2px; /* 顶部距离 2px */
-    left: 2px; /* 左侧距离 2px */
-    width: 14px; /* 设置滑块宽度为 14px */
-    height: 14px; /* 设置滑块高度为 14px，确保为正方形 */
-    border-radius: 50%; /* 设置圆角，形成圆形滑块 */
-    background: var(--bg-surface); /* 设置滑块背景颜色，使用全局变量 --bg-surface，增强视觉层次 */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12); /* 添加阴影，增强立体感 */
-    transition: transform var(--transition), background var(--transition); /* 添加过渡效果，提升交互体验 */
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    transition: transform var(--transition), background var(--transition);
 }
 
-/* 开关启用时的轨道颜色 */
-.switch input:checked + .slider {
-    background: rgba(47, 125, 244, 0.5); /* 启用时轨道颜色变为半透明蓝色 */
-}
+/* 开关激活轨道 */
+.switch input:checked + .slider { background: rgba(47, 125, 244, 0.5); }
 
-/* 简易向下兼容：老浏览器不支持 Grid 时改用 Flex 布局 */
-@supports not (display: grid) {
-    .app-shell {
-        display: flex; /* 使用 flex 布局，避免网格布局带来的兼容问题 */
-        flex-direction: column; /* 垂直排列子元素 */
-    }
-
-    .main-column {
-        width: 100%; /* 主列宽度 100% */
-    }
-
-    .section {
-        display: flex; /* 使用 flex 布局，方便排列子元素 */
-        flex-direction: column; /* 垂直排列子元素 */
-    }
-
-    .grid {
-        display: flex; /* 使用 flex 布局，方便排列子元素 */
-        flex-wrap: wrap; /* 超出部分换行 */
-        gap: 16px; /* 子元素之间的间距为 16px */
-    }
-
-    .metrics-grid > article {
-        flex: 1 1 200px; /* 指标卡片自适应宽度，最小 200px */
-    }
-}
-
-/* 开关启用时，滑块平移到右侧并着色 */
+/* 开关激活滑块位置 */
 .switch input:checked + .slider::after {
-    transform: translateX(14px); /* 滑块平移 14px 到右侧 */
-    background: var(--primary); /* 滑块启用时背景颜色变为全局变量 --primary */
+    transform: translateX(14px);
+    background: var(--primary);
 }
 
 /* 开关文字标签 */
-.switch-label {
-    font-size: 13px; /* 设置字体大小为 13px */
-    color: var(--text-main); /* 设置文字颜色，使用全局变量 --text-main */
-}
-
-.hidden { display: none !important; /* 强制隐藏元素 */ }
-
-/* 折叠态样式 */
-.app-shell.sidebar-collapsed .menu-label,
-.app-shell.sidebar-collapsed .brand-text,
-.app-shell.sidebar-collapsed .section-title,
-.app-shell.sidebar-collapsed .shortcut-btn {
-    display: none; /* 折叠状态下隐藏相关元素 */
-}
-
-.app-shell.sidebar-collapsed .sidebar {
-    padding: 16px 8px; /* 减小内边距，适配折叠状态 */
-}
-
-.app-shell.sidebar-collapsed .sidebar__brand {
-    grid-template-columns: auto auto; /* 折叠状态下调整品牌区布局 */
-}
-
-.app-shell.sidebar-collapsed .menu-item {
-    grid-template-columns: 22px; /* 折叠状态下仅保留图标列 */
-    justify-content: center; /* 图标居中对齐 */
-    padding: 12px; /* 设置内边距，增加点击区域 */
-}
-
-.app-shell.sidebar-collapsed .sidebar__section {
-    padding: 10px; /* 设置内边距，增加内容与边框的间距 */
-}
-
-/* 抽屉模式 */
-.app-shell.drawer-mode .topbar__menu {
-    display: inline-grid; /* 使用网格布局，方便排列抽屉模式下的菜单项 */
-}
-
-.app-shell.drawer-mode .sidebar__collapse {
-    display: none; /* 隐藏侧边栏折叠按钮 */
-}
-
-.app-shell.drawer-mode .sidebar__brand {
-    grid-template-columns: auto 1fr; /* 调整品牌区布局，适配抽屉模式 */
-}
-
-.app-shell.drawer-mode .brand-text {
-    display: block; /* 显示品牌文字 */
-}
-
-/* 底栏徽标：放置微泰.png，尺寸小且半透明，避免抢占视觉 */
-.footer-brandmark {
-    display: flex; /* 使用 flex 布局，方便对齐底栏徽标 */
-    align-items: center; /* 垂直居中对齐子元素 */
-    justify-content: flex-end; /* 右对齐 */
-    min-width: 96px; /* 设置最小宽度，避免内容过窄 */
-    opacity: 0.72; /* 设置透明度，减弱视觉占用 */
-    filter: saturate(0.92); /* 饱和度调整，避免颜色过于鲜艳 */
-    pointer-events: none; /* 禁止鼠标事件，避免干扰点击 */
-}
-
-.footer-brandmark img {
-    height: 20px; /* 设置徽标高度为 20px */
-    width: auto; /* 宽度自适应 */
-    object-fit: contain; /* 保持徽标比例，避免变形 */
-}
-
-@media (max-width: 720px) {
-    .topbar {
-        flex-direction: column; /* 小屏幕下顶部栏垂直排列 */
-        align-items: flex-start; /* 左对齐 */
-        gap: 10px; /* 子元素之间的间距为 10px */
-    }
-
-    .topbar__right {
-        width: 100%; /* 右侧区域宽度 100% */
-        justify-content: space-between; /* 子元素之间均匀分布，首尾对齐 */
-    }
-
-    .footer-brandmark img {
-        height: 16px; /* 小屏幕下徽标高度调整为 16px */
-    }
-}
+.switch-label { font-size: 13px; color: var(--text-main); }

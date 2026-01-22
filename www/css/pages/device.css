@@ -1,225 +1,80 @@
-/* 设备配置页样式（在 base.css 基础上做局部增强）
- * 结构分区：
- * - device-table-wrapper/device-table：上半区列表（可纵横滚动）；高度、最小宽度在此调节。
- * - form-grid/form-row/form-actions：下半区表单与按钮区域（栅格列数随断点变化）。
- * - 工具类：hint/empty-row/loading 等状态样式。
+/*
+ * 设备配置页面样式
+ * 说明：设备页特有的表单间距、按钮、面板内边距与提示样式。
  */
 
-/* 列表外框：控制可视高度与滚动，max-height 调整列表占比 */
-.device-table-wrapper {
-    overflow: auto; /* 允许列表在内容溢出时滚动，避免截断信息 */
-    max-height: 200px; /* 控制列表可视高度，暗色与亮色模式统一滚动空间 */
-    border: 1px solid var(--border-soft); /* 使用主题软边框，适配暗色与亮色 */
-    border-radius: 10px; /* 柔和圆角，保持卡片感 */
-    background: var(--bg-surface); /* 采用主题表面色，防止暗色模式下出现白底 */
-    width: 100%; /* 占满容器宽度，保持与表单对齐 */
-}
-
-/* 列表表格：min-width 控制出现横向滚动的阈值 */
-.device-table {
-    width: 100%; /* 让表格铺满容器，避免空白 */
-    min-width: 900px; /* 设置最小宽度，保证列信息可读 */
-    border-collapse: collapse; /* 合并边框，提升表格简洁度 */
-    font-size: 14px; /* 调整字号，兼顾密度与可读性 */
-}
-
-/* 表头与单元格：间距、边框与不换行行为 */
-.device-table th,
-.device-table td {
-    padding: 10px 12px; /* 控制单元格内边距，保证点击区域与可读性 */
-    text-align: left; /* 左对齐文本，方便比对数据 */
-    border-bottom: 1px solid var(--border-soft); /* 使用主题边框色，暗色模式不会过亮 */
-    white-space: nowrap; /* 防止字段换行导致行高不一致 */
-    color: var(--text-main); /* 统一文字颜色，暗色下保持对比度 */
-    background: transparent; /* 让行背景继承父级，兼容暗色底色 */
-}
-
-.device-table thead th {
-    background: var(--bg-elevated); /* 提升表头层级感，暗色下保持层次 */
-    font-weight: 600; /* 加粗表头文字，便于分栏识别 */
-    color: var(--text-main); /* 使用主题主文本色，暗色可读 */
-    position: sticky; /* 固定表头，滚动时保持可见 */
-    top: 0; /* 吸顶位置设为 0，避免遮挡 */
-    z-index: 1; /* 提升层级，覆盖行内容 */
-}
-
-.device-table tbody tr {
-    background: transparent; /* 行背景保持透明，继承父级以适配暗色 */
-}
-
-.device-table tbody tr:hover {
-    background: var(--row-hover, rgba(0, 122, 255, 0.06)); /* 悬停时轻微高亮，保持主题默认变量回退 */
-}
-
-/* 操作按钮与高亮态（点击后高亮所在按钮而非整行） */
-.device-table .action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 13px;
-    border: 1px solid var(--card-border, #e5e7eb);
-    background: var(--btn-ghost-bg, transparent);
-    cursor: pointer;
-}
-
-.device-table .action-btn.is-active {
-    border-color: var(--primary, #2f7df4);
-    color: var(--primary, #2f7df4);
-    background: rgba(47, 125, 244, 0.08);
-}
-
-.device-table .action-btn.danger {
-    border-color: var(--danger, #dc2626);
-    color: var(--danger, #dc2626);
-}
-
-/* 表单栅格：grid-template-columns 控制下半区列数，断点在文件底部 */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-/* 表单行：左右分布（标签左，输入右），提升纵向利用率 */
-.form-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-height: 44px; /* 如需调整行高，改这里 */
-}
-
-.form-row label {
-    flex: 0 0 120px; /* 标签列宽，可按需调节 */
-    margin: 0; /* 去除默认 margin，保持栅格整齐 */
-    font-weight: 600; /* 标签加粗，提升字段辨识度 */
-    color: var(--text-main); /* 使用主题主文本色，暗色模式下清晰可见 */
-}
-
-.form-row input,
-.form-row select {
-    flex: 1 1 auto;
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    background: var(--bg-surface);
-    color: var(--text-main);
-}
-
-/* 下半区表单（基础配置）局部微调：加大行间距、标签自适应、输入项拉满 */
+/* 基础配置表单：增大栅格间距 */
 #deviceSection .form-grid {
     gap: 24px 40px;
 }
 
+/* 表单行：微调左右间距 */
 #deviceSection .form-row {
     gap: 12px;
 }
 
+/* 表单标签：自适应宽度 */
 #deviceSection .form-row label {
     flex: 0 0 auto;
     width: auto;
 }
 
+/* 表单输入与下拉：拉满剩余空间 */
 #deviceSection .form-row input,
 #deviceSection .form-row select {
     flex: 1 1 auto;
 }
 
-/* 仅压缩“设备基础配置”面板头部与内边距，不影响列表面板 */
+/* 基础配置面板内边距 */
 #deviceSection .panel[aria-label="设备基础配置"] {
-    padding: 30px 20px; /* 扩大内边距，提供呼吸感 */
+    padding: 30px 20px;
 }
 
+/* 表单选项卡面板内边距 */
 #deviceSection .panel[aria-label="设备配置"] {
-    padding: 20px 20px 28px; /* 减小上边距让表单更靠近卡片上边界，保留下部呼吸感 */
+    padding: 20px 20px 28px;
 }
 
-#deviceSection .panel[aria-label="设备基础配置"] .panel-header {
+/* 面板标题间距 */
+#deviceSection .panel[aria-label="设备基础配置"] .panel-header,
+#deviceSection .panel[aria-label="设备配置"] .panel-header {
     margin-bottom: 8px;
 }
 
-#deviceSection .panel[aria-label="设备配置"] .panel-header {
-    margin-bottom: 8px; /* 选项卡面板标题间距 */
-}
-
-#deviceSection .panel[aria-label="设备基础配置"] .panel-header .ghost-btn {
+/* 面板右上按钮尺寸 */
+#deviceSection .panel[aria-label="设备基础配置"] .panel-header .ghost-btn,
+#deviceSection .panel[aria-label="设备配置"] .panel-header .ghost-btn {
     padding: 6px 10px;
 }
 
-#deviceSection .panel[aria-label="设备配置"] .panel-header .ghost-btn {
-    padding: 6px 10px; /* 预留与基础配置一致的按钮样式（当前未显示） */
-}
-
-.config-tabs {
-    display: inline-flex; /* 横向排列标签按钮 */
-    gap: 8px; /* 标签间距 */
-    margin-bottom: 12px; /* 收紧与表单的距离，靠近上边界 */
-    border-bottom: 1px solid var(--border-soft); /* 底部分隔线强调分组 */
-    padding-bottom: 4px; /* 底部分隔线与标签的间距 */
-}
-
-.config-tabs .tab-btn {
-    padding: 8px 14px; /* 标签按钮内边距，便于点击 */
-    border: 1px solid transparent; /* 默认无边框，保持简洁 */
-    border-radius: 8px; /* 圆角标签按钮 */
-    background: transparent; /* 初始透明背景 */
-    color: var(--text-main); /* 文字使用主题主色 */
-    font-weight: 700; /* 标签文字加粗，与列表标题一致 */
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; /* 平滑过渡 */
-}
-
-.config-tabs .tab-btn.is-active {
-    background: var(--panel-veil); /* 活动态背景，与面板区分 */
-    border-color: var(--border-soft); /* 活动边框强调当前标签 */
-    color: var(--primary); /* 活动态文字主色 */
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06); /* 轻微阴影突出当前标签 */
-}
-
-.config-tab-panel {
-    width: 100%; /* 占满面板宽度，避免左右空白 */
-}
-
-/* 按钮行：跨所有列，右对齐；可调 justify-content/margin 以改变位置 */
-.form-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 0;
-    align-items: center;
-    justify-content: flex-end;
-    grid-column: 1 / -1;
-}
-
-/* 下半区按钮行：右对齐并与表单保持更大间距 */
+/* 按钮行：右下对齐 */
 #deviceSection .form-actions {
-    display: flex; /* 使用弹性布局放置按钮 */
-    justify-content: flex-end; /* 按钮靠右对齐，符合提交操作位置惯例 */
-    grid-column: auto; /* 在栅格内占据单元格而非全行 */
-    justify-self: end; /* 栅格自对齐到右侧，保证位置一致 */
-    align-self: end; /* 栅格自对齐到底部，避免垂直漂移 */
+    display: flex;
+    justify-content: flex-end;
+    grid-column: auto;
+    justify-self: end;
+    align-self: end;
 }
 
-/* 设备配置页主按钮样式：醒目背景与悬停反馈 */
+/* 主按钮样式 */
 #deviceSection .form-actions .primary-btn {
-    background: var(--primary); /* 主色背景，突出主动作 */
-    color: #fff; /* 白色文字，与主色形成高对比 */
-    padding: 10px 24px; /* 增大点击与视觉区域 */
-    border-radius: 6px; /* 圆角按钮，柔和视觉 */
-    border: none; /* 移除边框，保持纯色块 */
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); /* 轻微阴影，提供浮起感 */
-    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; /* 平滑的悬停过渡 */
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+/* 主按钮悬停态 */
 #deviceSection .form-actions .primary-btn:hover {
-    background: var(--primary-strong, #1f5fc0); /* 悬停时加深主色，反馈可点击 */
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); /* 增强阴影，强调浮动感 */
-    transform: translateY(-1px); /* 轻微上移，提供交互反馈 */
+    background: var(--primary-strong, #1f5fc0);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
 }
 
-/* 下半区面板容器：取消 grid 居中，允许内容撑满宽度 */
+/* 下半区面板：去掉默认边框与内边距 */
 #deviceSection .panel-body {
     display: block;
     width: 100%;
@@ -227,81 +82,34 @@
     padding: 0;
 }
 
-.form-hint {
-    display: none; /* 旧的行内提示隐藏，避免撑开布局 */
-}
+/* 旧表单提示隐藏 */
+.form-hint { display: none; }
 
+/* 顶部提示浮层 */
 #toastMessage {
-    position: fixed; /* 固定在视口，随滚动保持可见 */
-    top: 10%; /* 默认位置靠近顶部，避免遮挡表单 */
-    left: 50%; /* 横向居中放置 */
-    transform: translateX(-50%); /* 修正居中偏移 */
-    background: rgba(0, 0, 0, 0.8); /* 深色半透明背景，突出提示 */
-    color: #fff; /* 白色文字，与深色背景对比清晰 */
-    padding: 10px 20px; /* 内边距让提示更易读 */
-    border-radius: 10px; /* 圆角提示气泡，友好视觉 */
-    z-index: 9999; /* 置顶以覆盖内容区域 */
-    opacity: 0; /* 默认透明，不显示 */
-    visibility: hidden; /* 默认不可见，避免聚焦 */
-    transition: all 0.3s ease; /* 统一过渡，显示/隐藏更顺滑 */
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
+/* 浮层展示态 */
 #toastMessage.show {
-    opacity: 1; /* 显示时提高不透明度 */
-    visibility: visible; /* 让元素可见参与布局 */
-    top: 12%; /* 轻微下移，形成浮动动画感 */
+    opacity: 1;
+    visibility: visible;
+    top: 12%;
 }
 
-/* 小提示文案色 */
+/* 文案提示色 */
 .hint {
     color: var(--text-muted, #6b7280);
     font-size: 13px;
-}
-
-/* 空数据行样式 */
-.empty-row td {
-    text-align: center;
-    color: var(--text-muted, #6b7280);
-}
-
-/* 按钮加载态：半透明并带旋转动画 */
-.loading {
-    position: relative;
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.loading::after {
-    content: '';
-    width: 14px;
-    height: 14px;
-    border: 2px solid transparent;
-    border-top-color: currentColor;
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 6px;
-}
-
-/* 响应式栅格：宽屏 3 列，中屏 2 列，小屏 1 列 */
-@media (min-width: 1200px) {
-    .form-grid {
-        grid-template-columns: repeat(3, minmax(240px, 1fr));
-    }
-}
-
-@media (min-width: 900px) and (max-width: 1199px) {
-    .form-grid {
-        grid-template-columns: repeat(2, minmax(260px, 1fr));
-    }
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg); 
-    }
-    to {
-        transform: rotate(360deg);
-    }
 }

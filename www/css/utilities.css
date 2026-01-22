@@ -1,0 +1,35 @@
+/*
+ * 工具类集合
+ * 说明：快速复用的布局、对齐、圆角、阴影与间距工具类。
+ */
+
+/* 强制隐藏元素 */
+.hidden { display: none !important; }
+
+/* 水平排列 */
+.flex-row { display: flex; }
+/* 居中对齐 */
+.flex-center { display: flex; align-items: center; justify-content: center; }
+/* 两端对齐 */
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+
+/* 次级文字色 */
+.text-muted { color: var(--text-muted); }
+/* 小圆角 */
+.rounded-sm { border-radius: var(--radius-sm); }
+/* 中圆角 */
+.rounded-md { border-radius: var(--radius-md); }
+/* 大圆角 */
+.rounded-lg { border-radius: var(--radius-lg); }
+
+/* 柔和阴影 */
+.shadow-soft { box-shadow: var(--shadow-soft); }
+/* 卡片阴影 */
+.shadow-card { box-shadow: var(--shadow-card); }
+
+/* 统一内边距与间距 */
+.p-12 { padding: 12px; }
+.p-16 { padding: 16px; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }

@@ -62,7 +62,7 @@ class AuthManager {
 
     onLoginSuccess(btnTextEl) {
         if (btnTextEl) btnTextEl.innerText = '连接成功';
-        window.location.href = 'dashboard.html';
+        window.location.href = 'app.html';
     }
 
     onLoginFailure(btnTextEl, originalText, passwordInput, message) {

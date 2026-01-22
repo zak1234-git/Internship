@@ -1,0 +1,339 @@
+/*
+ * 布局组件样式清单
+ * 说明：封装侧边栏、顶部栏、抽屉、用户菜单与底栏徽标等通用外壳样式。
+ */
+
+/* 侧边栏容器：背景、分隔线与垂直排布 */
+.sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 14px;
+    color: var(--sidebar-text);
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.02);
+}
+
+/* 抽屉遮罩：移动端侧滑时的遮挡层 */
+.drawer-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: none;
+    z-index: 15;
+}
+
+/* 抽屉开启时显示遮罩 */
+.app-shell.drawer-open .drawer-mask { display: block; }
+
+/* 侧边栏品牌区：Logo 与折叠按钮布局 */
+.sidebar__brand {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: var(--panel-veil);
+    border: 1px solid var(--sidebar-border);
+    box-shadow: 0 8px 24px rgba(31, 41, 55, 0.08);
+}
+
+/* 默认 Logo 占位：正方形边框填充 */
+.brand-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px dashed rgba(47, 125, 244, 0.35);
+    background: rgba(47, 125, 244, 0.08);
+}
+
+/* 图片 Logo：保持比例的星闪图标 */
+.brand-logo--image {
+    width: clamp(88px, 14vw, 150px);
+    height: clamp(36px, 6vw, 64px);
+    aspect-ratio: 2.6 / 1;
+    background-image: url('../../assets/星闪.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* 品牌文字：默认隐藏 */
+.brand-text { display: none; }
+
+/* 折叠按钮位置控制 */
+.sidebar__collapse { justify-self: end; }
+
+/* 折叠态品牌区：仅保留按钮 */
+.app-shell.sidebar-collapsed .sidebar__brand {
+    grid-template-columns: auto;
+    padding: 10px;
+}
+
+/* 折叠态隐藏 Logo */
+.app-shell.sidebar-collapsed .brand-logo { display: none; }
+
+/* 折叠态按钮居左 */
+.app-shell.sidebar-collapsed .sidebar__collapse { justify-self: start; }
+
+/* 导航列表容器：垂直排列入口 */
+.sidebar__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* 导航项：图标+文字两列布局 */
+.menu-item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    color: var(--sidebar-muted);
+    border: 1px solid transparent;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+/* 导航文字：单行展示 */
+.menu-item .menu-label { white-space: nowrap; }
+
+/* 导航 hover/激活态：高亮背景与描边 */
+.menu-item.active,
+.menu-item:hover {
+    color: var(--sidebar-text);
+    background: rgba(47, 125, 244, 0.12);
+    border-color: rgba(47, 125, 244, 0.25);
+    box-shadow: 0 8px 16px rgba(47, 125, 244, 0.12);
+}
+
+/* 导航图标容器：渐变背景与描边 */
+.menu-icon {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    font-size: 16px;
+    border-radius: 8px;
+    color: var(--sidebar-text);
+    background: linear-gradient(135deg, rgba(47, 125, 244, 0.18), rgba(34, 197, 94, 0.08));
+    border: 1px solid var(--sidebar-border);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* 侧栏快捷区域：按钮分组容器 */
+.sidebar__section {
+    padding: 12px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--sidebar-border);
+    background: var(--panel-veil);
+    display: grid;
+    gap: 10px;
+}
+
+/* 快捷区标题文字 */
+.section-title {
+    font-size: 13px;
+    color: var(--sidebar-muted);
+}
+
+/* 快捷按钮组：纵向排列 */
+.shortcut-group { display: grid; gap: 8px; }
+
+/* 快捷按钮：浅色描边块 */
+.shortcut-btn {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--sidebar-border);
+    background: var(--panel-veil-soft);
+    color: var(--sidebar-text);
+    text-align: left;
+    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+/* 快捷按钮悬停态 */
+.shortcut-btn:hover {
+    border-color: rgba(47, 125, 244, 0.35);
+    background: rgba(47, 125, 244, 0.12);
+    box-shadow: 0 8px 16px rgba(47, 125, 244, 0.12);
+}
+
+/* 顶部栏：粘顶背景与分隔线 */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--panel-veil);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+/* 顶部栏左侧区：菜单与品牌 */
+.topbar__left { display: flex; align-items: center; gap: 12px; }
+/* 移动端汉堡按钮：桌面隐藏 */
+.topbar__menu { display: none; }
+
+/* 品牌标题：可双击回首页 */
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* 品牌文字样式 */
+.brand-name {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* 顶部栏右侧区：主题与用户菜单 */
+.topbar__right { display: flex; align-items: center; gap: 12px; }
+
+/* 用户菜单容器 */
+.user-menu { position: relative; }
+
+/* 用户触发按钮：头像+信息+箭头 */
+.user-trigger {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-soft);
+    background: var(--panel-veil-strong);
+    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+/* 用户触发按钮悬停态 */
+.user-trigger:hover {
+    border-color: var(--primary);
+    background: rgba(47, 125, 244, 0.06);
+    box-shadow: 0 10px 20px rgba(47, 125, 244, 0.12);
+}
+
+/* 头像占位块 */
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(47, 125, 244, 0.4), rgba(34, 197, 94, 0.2));
+    border: 1px solid var(--border-soft);
+}
+
+/* 用户信息栅格 */
+.user-meta { display: grid; gap: 2px; }
+/* 用户名文字 */
+.user-name { font-weight: 700; }
+/* 角色文字 */
+.user-role { color: var(--text-muted); font-size: 12px; }
+
+/* 向下箭头符号 */
+.chevron {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+}
+
+/* 用户下拉容器 */
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: 6px;
+    display: none;
+    min-width: 180px;
+    z-index: 15;
+}
+
+/* 下拉展开态 */
+.user-dropdown.open { display: grid; gap: 4px; }
+
+/* 下拉项按钮 */
+.dropdown-item {
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition);
+}
+
+/* 下拉 hover 与警示态 */
+.dropdown-item:hover { background: rgba(47, 125, 244, 0.12); }
+.dropdown-item.danger { color: var(--danger); }
+
+/* 主内容区背景与内边距 */
+.content {
+    padding: 18px;
+    overflow: auto;
+    background: var(--panel-veil-strong);
+}
+
+/* 底栏徽标容器 */
+.footer-brandmark {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 96px;
+    opacity: 0.72;
+    filter: saturate(0.92);
+    pointer-events: none;
+}
+
+/* 底栏徽标图片尺寸 */
+.footer-brandmark img {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* 折叠态：隐藏文字与按钮 */
+.app-shell.sidebar-collapsed .menu-label,
+.app-shell.sidebar-collapsed .brand-text,
+.app-shell.sidebar-collapsed .section-title,
+.app-shell.sidebar-collapsed .shortcut-btn { display: none; }
+
+/* 折叠态内边距与布局调整 */
+.app-shell.sidebar-collapsed .sidebar { padding: 16px 8px; }
+.app-shell.sidebar-collapsed .sidebar__brand { grid-template-columns: auto auto; }
+.app-shell.sidebar-collapsed .menu-item { grid-template-columns: 22px; justify-content: center; padding: 12px; }
+.app-shell.sidebar-collapsed .sidebar__section { padding: 10px; }
+
+/* 抽屉模式：移动端展示控制 */
+.app-shell.drawer-mode .topbar__menu { display: inline-grid; }
+.app-shell.drawer-mode .sidebar__collapse { display: none; }
+.app-shell.drawer-mode .sidebar__brand { grid-template-columns: auto 1fr; }
+.app-shell.drawer-mode .brand-text { display: block; }
+
+/* 不支持 grid 的降级方案 */
+@supports not (display: grid) {
+    .app-shell { display: flex; flex-direction: column; }
+    .main-column { width: 100%; }
+    .section { display: flex; flex-direction: column; }
+    .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+    .metrics-grid > article { flex: 1 1 200px; }
+}
+
+/* 小屏幕适配：顶部栏与徽标尺寸 */
+@media (max-width: 720px) {
+    .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .topbar__right { width: 100%; justify-content: space-between; }
+    .footer-brandmark img { height: 16px; }
+}

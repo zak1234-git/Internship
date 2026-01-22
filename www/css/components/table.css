@@ -1,0 +1,79 @@
+/*
+ * 表格组件样式
+ * 说明：设备列表等复用的表格外壳、单元格与操作按钮。
+ */
+
+/* 表格外框：滚动与背景 */
+.device-table-wrapper {
+    overflow: auto;
+    max-height: 200px;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    background: var(--bg-surface);
+    width: 100%;
+}
+
+/* 表格主体：最小宽度与合并边框 */
+.device-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+/* 表头与单元格：内边距与描边 */
+.device-table th,
+.device-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+    color: var(--text-main);
+    background: transparent;
+}
+
+/* 表头：加粗并吸顶 */
+.device-table thead th {
+    background: var(--bg-elevated);
+    font-weight: 600;
+    color: var(--text-main);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* 表体行：默认透明与 hover 高亮 */
+.device-table tbody tr { background: transparent; }
+.device-table tbody tr:hover { background: var(--row-hover, rgba(0, 122, 255, 0.06)); }
+
+/* 行内操作按钮：描边小尺寸 */
+.device-table .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 1px solid var(--card-border, #e5e7eb);
+    background: var(--btn-ghost-bg, transparent);
+    cursor: pointer;
+}
+
+/* 操作按钮激活态 */
+.device-table .action-btn.is-active {
+    border-color: var(--primary, #2f7df4);
+    color: var(--primary, #2f7df4);
+    background: rgba(47, 125, 244, 0.08);
+}
+
+/* 危险操作按钮态 */
+.device-table .action-btn.danger {
+    border-color: var(--danger, #dc2626);
+    color: var(--danger, #dc2626);
+}
+
+/* 空数据行提示样式 */
+.empty-row td {
+    text-align: center;
+    color: var(--text-muted, #6b7280);
+}

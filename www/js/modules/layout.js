@@ -50,7 +50,7 @@ class LayoutController {
 
         if (this.brandArea) {
             this.brandArea.addEventListener('dblclick', () => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'app.html';
             });
         }
 

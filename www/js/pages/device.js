@@ -326,7 +326,7 @@
                 setLoading(btn, false);
                 alert(actionText + '操作已完成（预览模式）');
                 if (type === 'reboot' || type === 'factory') {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'app.html';
                 }
             });
         }
@@ -368,7 +368,7 @@
         // 修改当前设备 IP 后跳转仪表盘（新地址）
         function redirectToNewIp(ip) {
             var protocol = window.location.protocol || 'http:';
-            var target = protocol + '//' + ip + '/dashboard.html';
+            var target = protocol + '//' + ip + '/app.html';
             window.location.href = target;
         }
 

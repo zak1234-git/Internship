@@ -1,6 +1,9 @@
-/* 基础样式与主题变量（默认浅色）
- * 说明：集中定义色板、阴影、圆角与常用尺寸，方便切换主题与复用。 
+/*
+ * 基础样式与主题变量（默认浅色）
+ * 说明：全局色板、阴影、圆角、尺寸与通用容器基底，所有页面共享。
  */
+
+/* 主题变量：颜色、阴影、圆角、尺寸与过渡 */
 :root {
     --bg-body: #f4f7fb;
     --bg-surface: #ffffff;
@@ -33,12 +36,14 @@
     --panel-veil-soft: rgba(255, 255, 255, 0.78);
 }
 
+/* 全局重置：边距与盒模型 */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* 页面基底：字体、背景与平滑 */
 body {
     font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
     background: radial-gradient(circle at 18% 18%, rgba(47, 125, 244, 0.08), transparent 26%),
@@ -50,7 +55,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* 深色模式覆盖：通过切换 body.theme-dark 覆盖变量，无需重写组件样式 */
+/* 深色模式变量覆盖：切换 body.theme-dark 即可 */
 body.theme-dark {
     --bg-body: #0b1628;
     --bg-surface: #111d33;
@@ -77,11 +82,13 @@ body.theme-dark {
                 var(--bg-body);
 }
 
+/* 链接默认继承文字色 */
 a {
     color: inherit;
     text-decoration: none;
 }
 
+/* 按钮统一基底：去除默认样式 */
 button {
     font: inherit;
     color: inherit;
@@ -90,7 +97,7 @@ button {
     cursor: pointer;
 }
 
-/* 页面整体布局：左侧 sidebar + 右侧内容列 */
+/* 应用外壳：左侧侧边栏 + 右侧主列 */
 .app-shell {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
@@ -106,14 +113,14 @@ button {
     grid-template-columns: 1fr;
 }
 
-/* 右侧内容列：顶部栏 + 内容区 + 底栏 */
+/* 主列：顶部栏 + 内容区 + 底栏 */
 .main-column {
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
 }
 
-/* 通用图标按钮：用于折叠/主题/抽屉等快捷操作 */
+/* 通用图标按钮：折叠/主题/抽屉等 */
 .icon-btn {
     width: 38px;
     height: 38px;
@@ -131,7 +138,7 @@ button {
     transform: translateY(-1px);
 }
 
-/* 折叠/主题按钮图形，使用伪元素绘制基础形态 */
+/* 折叠/主题按钮图形：伪元素绘制 */
 .icon-bars,
 .icon-sun {
     position: relative;
@@ -161,7 +168,7 @@ button {
     background: none;
 }
 
-/* 次级按钮：用于“手动扫描”等辅助操作 */
+/* 次级按钮：浅色描边按钮 */
 .ghost-btn {
     padding: 10px 14px;
     border-radius: var(--radius-sm);
@@ -177,13 +184,14 @@ button {
     transform: translateY(-1px);
 }
 
-/* 通用区块布局与排版 */
+/* 通用区块：段落容器 */
 .section {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
+/* 区块头部：标题与操作对齐 */
 .section-header {
     display: flex;
     align-items: center;
@@ -191,36 +199,41 @@ button {
     gap: 16px;
 }
 
+/* 区块标题 */
 .section-title {
     font-size: 22px;
     font-weight: 700;
 }
 
+/* 区块副标题 */
 .section-sub {
     color: var(--text-muted);
     font-size: 14px;
 }
 
+/* 区块右上操作区 */
 .section-actions {
     display: flex;
     gap: 10px;
 }
 
-/* 通用栅格：卡片和面板用的自适应网格 */
+/* 通用栅格：卡片/面板自适应列 */
 .grid {
     display: grid;
     gap: 16px;
 }
 
+/* 指标卡专用栅格 */
 .metrics-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+/* 双列自适应栅格 */
 .two-col {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-/* 卡片与面板基底：阴影+圆角统一 */
+/* 卡片/面板基底：阴影与圆角统一 */
 .card,
 .panel {
     background: var(--bg-surface);
@@ -230,6 +243,7 @@ button {
     box-shadow: var(--shadow-card);
 }
 
+/* 卡片/面板头部：左右对齐 */
 .card-header,
 .panel-header {
     display: flex;
@@ -239,6 +253,7 @@ button {
     margin-bottom: 12px;
 }
 
+/* 卡片图标块 */
 .card-icon {
     width: 42px;
     height: 42px;
@@ -252,32 +267,36 @@ button {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
+/* 卡片标题 */
 .card-title {
     font-weight: 700;
 }
 
+/* 卡片副标题 */
 .card-sub {
     color: var(--text-muted);
     font-size: 13px;
 }
 
+/* 卡片内容区间距 */
 .card-body {
     margin-top: 6px;
 }
 
-/* 核心数字强调样式 */
+/* 关键数字强调 */
 .stat {
     font-size: 26px;
     font-weight: 800;
 }
 
+/* 数字描述文字 */
 .stat-desc {
     color: var(--text-muted);
     font-size: 13px;
     margin-top: 4px;
 }
 
-/* 详情面板默认态：居中空状态提示 */
+/* 详情面板占位态 */
 .panel-body {
     color: var(--text-muted);
     min-height: 180px;
@@ -287,7 +306,7 @@ button {
     place-items: center;
 }
 
-/* 底栏：展示版本与时间信息，半透明玻璃效果 */
+/* 底栏：版本与时间信息 */
 .footer {
     padding: 12px 18px;
     background: var(--glass-bg);
@@ -298,6 +317,7 @@ button {
     backdrop-filter: blur(8px);
 }
 
+/* 底栏元信息行 */
 .footer-meta {
     display: flex;
     align-items: center;
@@ -306,10 +326,12 @@ button {
     font-size: 13px;
 }
 
+/* 底栏分隔点 */
 .footer .dot {
     color: rgba(99, 115, 129, 0.5);
 }
 
+/* 1024 以下：侧边栏变抽屉，区块头部换行 */
 @media (max-width: 1024px) {
     .app-shell.drawer-mode .sidebar {
         position: fixed;
@@ -336,6 +358,7 @@ button {
     }
 }
 
+/* 720 以下：单列栅格 */
 @media (max-width: 720px) {
     .metrics-grid {
         grid-template-columns: 1fr;
