@@ -1,11 +1,10 @@
-/**
- * 仪表盘页面逻辑：暴露 initDashboardSection 以供 section loader 调用
- */
+/* 仪表盘页面逻辑：暴露 initDashboardSection 以供 section loader 调用 */
 (function () {
     let initialized = false;
     let state = null;
     let activeKey = 'deviceInfo';
     const metricKeys = ['deviceInfo', 'deviceTotal', 'topology', 'traffic', 'resource'];
+    const notifier = window.notify || { toast: (m, o) => alert(m, o) }; // 统一通知出口
     const buildDemoTopology = (basic) => [
         {
             id: basic.id ?? 0,
@@ -19,9 +18,7 @@
         },
     ];
 
-    /**
-     * 初始化仪表盘 section，需在片段插入 DOM 后调用
-     */
+    /* 初始化仪表盘 section，需在片段插入 DOM 后调用 */
     function initDashboardSection(sectionRoot) {
         if (initialized) return;
         const root = sectionRoot || document.getElementById('dashboardSection');
@@ -66,6 +63,7 @@
         hydrateDeviceDetail(demoBasicInfo.data, true);
         hydrateTopologyDetail(buildDemoTopology(demoBasicInfo.data), true);
         fetchDeviceBasicInfo();
+        fetchTopology();
 
         initialized = true;
         window.dashboardPage.patchMetrics = patchMetrics;
@@ -73,11 +71,12 @@
         window.dashboardPage.getState = () => ({ ...state });
     }
 
+    /* 绑定顶部快捷操作，统一使用 notifier 反馈 */
     function bindShortcuts() {
         const map = {
-            btnExportLog: () => console.log('TODO: 导出日志'),
-            btnFactoryReset: () => console.log('TODO: 恢复出厂设置'),
-            btnReboot: () => console.log('TODO: 重启设备'),
+            btnExportLog: () => notifier.toast('日志导出功能待接入', { variant: 'info' }),
+            btnFactoryReset: () => handleShortcutAction('factory'),
+            btnReboot: () => handleShortcutAction('reboot'),
         };
         Object.entries(map).forEach(([id, fn]) => {
             const el = document.getElementById(id);
@@ -85,6 +84,7 @@
         });
     }
 
+    /* 绑定右侧开关与手动扫描按钮 */
     function setupToggles() {
         const autoAvoid = document.querySelector('#toggleAutoAvoid input');
         const autoJoin = document.querySelector('#toggleAutoJoin input');
@@ -99,6 +99,7 @@
         applyNodeVisibility();
     }
 
+    /* 绑定卡片点击与键盘激活 */
     function bindCards(root) {
         metricKeys.forEach((key) => {
             const card = root.querySelector(`[data-card="${key}"]`);
@@ -113,6 +114,7 @@
         });
     }
 
+    /* 选择卡片并刷新详情 */
     function selectCard(key) {
         activeKey = key;
         metricKeys.forEach((k) => {
@@ -122,10 +124,12 @@
         renderDetail();
     }
 
+    /* 渲染全部卡片的数字与描述 */
     function renderAllCards() {
         metricKeys.forEach((key) => updateCard(key));
     }
 
+    /* 更新单个卡片的展示值 */
     function updateCard(key) {
         const item = state && state[key];
         if (!item) return;
@@ -133,6 +137,7 @@
         setText(`${key}Desc`, item.desc ?? '');
     }
 
+    /* 根据当前选中卡片渲染详情区 */
     function renderDetail() {
         if (!state) return;
         const detailContent = document.getElementById('detailContent');
@@ -217,6 +222,7 @@
                 { key: 'bw', label: '物理带宽' },
                 { key: 'tfc_bw', label: '业务带宽' },
                 { key: 'version', label: '固件版本' },
+                { key: 'mac', label: 'MAC' },
             ];
 
             const thead = document.createElement('thead');
@@ -237,9 +243,10 @@
                         td.textContent = node.type === 0 ? 'G 节点' : 'T 节点';
                     } else if (col.key === 'bw' || col.key === 'tfc_bw') {
                         const val = node[col.key];
-                        td.textContent = val != null ? `${val}M` : '--';
+                        td.textContent = val != null && val !== '' ? `${val}M` : '--';
                     } else {
-                        td.textContent = node[col.key] != null ? node[col.key] : '--';
+                        const val = node[col.key];
+                        td.textContent = val != null && val !== '' ? val : '--';
                     }
                     tr.appendChild(td);
                 });
@@ -260,6 +267,7 @@
         detailList.innerHTML = '';
     }
 
+    /* 根据节点类型显示/隐藏相关控件 */
     function applyNodeVisibility() {
         const type = state?.node?.type;
         const autoAvoidWrap = document.getElementById('toggleAutoAvoid');
@@ -271,6 +279,7 @@
         if (manualScanBtn) manualScanBtn.classList.toggle('hidden', type !== 'T');
     }
 
+    /* 更新本地 node 标记并同步 UI 开关 */
     function updateNodeFlags(partial) {
         if (!state) return;
         state.node = { ...state.node, ...partial };
@@ -287,22 +296,26 @@
         applyNodeVisibility();
     }
 
+    /* 启动底部时间更新 */
     function startFooterClock() {
         updateFooter();
         setInterval(updateFooter, 60 * 1000);
     }
 
+    /* 渲染底部版本与时间 */
     function updateFooter() {
         const now = new Date();
         setText('lastUpdated', now.toLocaleString());
         setText('appVersion', 'v0.1.0');
     }
 
+    /* 安全地设置文本 */
     function setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
     }
 
+    /* 拉取单个节点的基础信息，并更新卡片与详情 */
     async function fetchDeviceBasicInfo(nodeId = 0) {
         try {
             const resp = await apiClient.getNodeBasicInfo(nodeId);
@@ -317,6 +330,93 @@
             updateCard('deviceInfo');
             if (activeKey === 'deviceInfo') renderDetail();
         }
+    }
+
+    /* 顶部快捷按钮动作：对接重启/出厂接口并反馈通知 */
+    async function handleShortcutAction(type, nodeId = 0) {
+        const actionText = type === 'reboot' ? '重启' : '恢复出厂';
+        notifier.toast(`${actionText}中...`, { variant: 'info', duration: 1800 });
+        try {
+            if (type === 'reboot') {
+                await apiClient.rebootNode(nodeId, {});
+            } else {
+                await apiClient.factoryResetNode(nodeId, {});
+            }
+            notifier.toast(`${actionText}已下发`, { variant: 'success' });
+        } catch (err) {
+            console.error(`[dashboard] ${actionText}失败`, err);
+            notifier.toast(`${actionText}失败`, { variant: 'error' });
+        }
+    }
+
+    /* 拉取节点列表填充拓扑与设备总数，失败则保留示例数据 */
+    async function fetchTopology() {
+        try {
+            const resp = await apiClient.getNodes();
+            const raw = resp && resp.data && resp.data.nodes ? resp.data.nodes : resp && resp.nodes ? resp.nodes : [];
+            const baseList = Array.isArray(raw)
+                ? raw.map((n, idx) => ({
+                      id: n && n.id != null ? n.id : idx,
+                      name: (n && n.name) || '节点 ' + idx,
+                      type: n && n.type != null ? n.type : 0,
+                      ip: (n && n.ip) || '',
+                      channel: n && n.channel != null ? n.channel : null,
+                      bw: n && n.bw != null ? n.bw : null,
+                      tfc_bw: n && n.tfc_bw != null ? n.tfc_bw : null,
+                      version: (n && n.version) || '',
+                      mac: (n && n.mac) || '',
+                  }))
+                : [];
+
+            const list = await enrichTopology(baseList);
+            hydrateTopologyDetail(list, false);
+            state.deviceTotal = {
+                ...state.deviceTotal,
+                value: list.length || '--',
+                desc: list.length ? `节点数 ${list.length}` : '暂无节点',
+            };
+            updateCard('deviceTotal');
+            if (activeKey === 'deviceTotal') renderDetail();
+        } catch (err) {
+            console.error('获取拓扑失败，保持示例数据', err);
+        }
+    }
+
+    /* 用节点详情（基于 id / ip）补全拓扑列 */
+    async function enrichTopology(nodes) {
+        if (!Array.isArray(nodes) || nodes.length === 0) return nodes;
+        const tasks = nodes.map((node) => fetchNodeDetail(node));
+        const results = await Promise.allSettled(tasks);
+        return nodes.map((node, idx) => {
+            const res = results[idx];
+            if (!res || res.status !== 'fulfilled' || !res.value) return node;
+            const detail = res.value;
+            return {
+                ...node,
+                ip: detail.ip != null ? detail.ip : node.ip,
+                channel: detail.channel != null ? detail.channel : node.channel,
+                bw: detail.bw != null ? detail.bw : node.bw,
+                tfc_bw: detail.tfc_bw != null ? detail.tfc_bw : node.tfc_bw,
+                version: detail.version != null ? detail.version : node.version,
+                name: detail.name || node.name,
+                type: detail.type != null ? detail.type : node.type,
+                mac: detail.mac != null ? detail.mac : node.mac,
+            };
+        });
+    }
+
+    async function fetchNodeDetail(node) {
+        if (!node) return null;
+        try {
+            if (node.id != null) {
+                const resp = await apiClient.getNodeBasicInfo(node.id);
+                return resp && resp.data ? resp.data : resp;
+            }
+        } catch (err) {
+            console.warn('[dashboard] enrich detail by id failed', err);
+        }
+        // 如果后端有按 IP 查询接口，可在此兜底
+        return null;
     }
 
     function hydrateDeviceDetail(data, isDemo = false) {

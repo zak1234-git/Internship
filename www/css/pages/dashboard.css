@@ -20,11 +20,12 @@
     width: 100%;
     min-height: 320px;
     display: grid;
-    align-items: center;
+    align-items: start;
     justify-items: stretch;
     padding: 16px 18px 18px;
     gap: 12px;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* 详情占位文案 */
@@ -56,8 +57,9 @@
 
 /* 拓扑表格外框 */
 .topology-table-wrapper {
-    overflow: auto;
+    overflow-x: auto;
     width: 100%;
+    max-width: 100%;
     grid-column: 1 / -1;
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-md);
@@ -68,7 +70,7 @@
 /* 拓扑表格主体 */
 .topology-table {
     width: 100%;
-    min-width: 720px;
+    min-width: 860px;
     border-collapse: collapse;
     font-size: 14px;
 }
@@ -134,7 +136,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 /* 自定义开关外壳 */
@@ -142,7 +144,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 8px;
+    padding: 5px 8px;
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-sm);
     background: var(--panel-veil);
@@ -188,3 +190,11 @@
 
 /* 开关文字标签 */
 .switch-label { font-size: 13px; color: var(--text-main); }
+
+@media (max-width: 1180px) {
+    .toggle-group { gap: 6px; }
+    .switch { padding: 4px 6px; gap: 6px; }
+    .switch-label { font-size: 12px; }
+    .detail-list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .topology-table { min-width: 780px; }
+}

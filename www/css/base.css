@@ -36,6 +36,24 @@
     --panel-veil-soft: rgba(255, 255, 255, 0.78);
 }
 
+@media (max-width: 1366px) {
+    :root {
+        --sidebar-width: 230px;
+        --sidebar-width-collapsed: 74px;
+    }
+    .section-actions { gap: 8px; }
+}
+
+@media (max-width: 1180px) {
+    :root {
+        --sidebar-width: 200px;
+        --sidebar-width-collapsed: 70px;
+    }
+    .section-header { gap: 10px; }
+    .section-actions { gap: 6px; flex-wrap: nowrap; }
+    .ghost-btn { padding: 8px 10px; }
+}
+
 /* 全局重置：边距与盒模型 */
 * {
     box-sizing: border-box;
@@ -331,8 +349,8 @@ button {
     color: rgba(99, 115, 129, 0.5);
 }
 
-/* 1024 以下：侧边栏变抽屉，区块头部换行 */
-@media (max-width: 1024px) {
+/* 900 以下：侧边栏变抽屉，区块头部换行 */
+@media (max-width: 900px) {
     .app-shell.drawer-mode .sidebar {
         position: fixed;
         inset: 0 auto 0 0;
@@ -352,10 +370,7 @@ button {
         grid-template-rows: auto 1fr auto;
     }
 
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    .section-header { flex-direction: column; align-items: flex-start; }
 }
 
 /* 720 以下：单列栅格 */

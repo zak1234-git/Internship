@@ -1,26 +1,20 @@
-/**
- * API 客户端模块
- * - 从 config.json 读取后端地址与端口
- * - 统一拼接 /api/v1 基础路径
- * - 内置 Bearer Token 透传（可在调用前设置）
- * - 提供常用业务接口封装，便于页面直接调用
+/*
+ * API 客户端模块：配置驱动 baseUrl/Token/超时，统一 /api/v1 前缀，封装常用业务接口。
  */
-
 class ApiClient {
     constructor() {
         this.baseUrl = '';
         this.initialized = false;
         this.apiPrefix = '/api/v1';
         this.token = null; // 如有登录得到的 token，可通过 setToken 传入
+        this.timeout = 10000; // 默认 10s，config.json 可覆盖
     }
 
-    /**
-     * 初始化：读取配置文件
-     */
+    /* 初始化：读取配置文件并构建 baseUrl / token / timeout */
     async init() {
         if (this.initialized) return;
 
-        // file:// 预览时直接跳过网络配置，交由页面使用示例数据
+        // file:// 预览时跳过网络配置，允许后续走示例数据
         if (window.location.protocol === 'file:') {
             console.warn('[ApiClient] file:// 预览，跳过 config.json，使用占位 baseUrl');
             this.baseUrl = '';
@@ -29,49 +23,52 @@ class ApiClient {
         }
 
         try {
-            // 读取根目录下的 config.json，避免把接口地址写死在代码里
             const response = await fetch('config.json');
             if (!response.ok) throw new Error('无法加载配置文件');
-            
             const config = await response.json();
-            
-            // 处理服务器地址配置
+
             const ip = config.serverip || 'localhost';
             const port = config.port || '8080';
-            
-            // 智能构建 Base URL：支持直接写 http/https，也支持裸 IP/域名
+            this.token = config.token || this.token;
+            this.timeout = config.timeout || this.timeout;
+
+            // 与 main.js 类似：支持 http/https 或裸 IP/域名
             if (ip.startsWith('http://') || ip.startsWith('https://')) {
                 this.baseUrl = `${ip}:${port}`;
             } else {
                 this.baseUrl = `http://${ip}:${port}`;
             }
-            
+
             console.log(`[ApiClient] 初始化成功，API 地址: ${this.baseUrl}`);
         } catch (error) {
             console.warn('[ApiClient] 初始化失败，将使用默认占位，file:// 预览将直接走示例数据:', error);
-            // 允许后续逻辑继续运行（例如本地 file:// 预览使用示例数据）
             this.baseUrl = '';
         } finally {
             this.initialized = true;
         }
     }
 
-    /** 设置/更新 Bearer Token（登录成功后调用） */
+    /* 手动覆写配置（运行时切换 IP/Port/Token/Timeout） */
+    setConfig({ baseUrl, ip, port, token, timeout } = {}) {
+        if (baseUrl) this.baseUrl = baseUrl;
+        if (ip) this.baseUrl = ip.startsWith('http') ? `${ip}${port ? ':' + port : ''}` : `http://${ip}${port ? ':' + port : ''}`;
+        if (token) this.token = token;
+        if (timeout) this.timeout = timeout;
+        this.initialized = true;
+    }
+
+    /* 设置/更新 Bearer Token（登录成功后调用） */
     setToken(token) {
         this.token = token;
     }
 
-    /** 统一构建完整 URL，自动附加 /api/v1 前缀 */
+    /* 统一构建完整 URL，自动附加 /api/v1 前缀 */
     buildUrl(endpoint) {
         const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
         return `${this.baseUrl}${this.apiPrefix}${path}`;
     }
 
-    /**
-     * 通用请求封装（自动挂载 JSON 头与 Token，支持覆盖）
-     * @param {string} endpoint 例如 '/nodes'
-     * @param {RequestInit} options fetch 选项
-     */
+    /* 通用请求封装：自动挂载 JSON/Token，支持超时 */
     async request(endpoint, options = {}) {
         if (!this.initialized) await this.init();
 
@@ -81,7 +78,6 @@ class ApiClient {
         }
 
         const url = this.buildUrl(endpoint);
-
         const isFormData = options.body instanceof FormData;
         const defaultHeaders = {
             ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
@@ -96,6 +92,12 @@ class ApiClient {
             ...options,
             headers: { ...defaultHeaders, ...(options.headers || {}) },
         };
+
+        // 超时控制：使用 AbortController，可被调用方覆盖 timeout
+        const controller = new AbortController();
+        const timeoutMs = options.timeout || this.timeout;
+        const timer = timeoutMs ? setTimeout(() => controller.abort(), timeoutMs) : null;
+        finalOptions.signal = controller.signal;
 
         try {
             const response = await fetch(url, finalOptions);
@@ -114,15 +116,17 @@ class ApiClient {
         } catch (error) {
             console.error(`[ApiClient] 请求失败: ${url}`, error);
             throw error;
+        } finally {
+            if (timer) clearTimeout(timer);
         }
     }
 
-    /** 基础 GET */
+    /* 基础 GET */
     get(endpoint, options = {}) {
         return this.request(endpoint, { ...options, method: 'GET' });
     }
 
-    /** 基础 POST（JSON） */
+    /* 基础 POST（JSON 或 FormData） */
     post(endpoint, data, options = {}) {
         return this.request(endpoint, {
             ...options,
@@ -131,77 +135,79 @@ class ApiClient {
         });
     }
 
-    /**
-     * 业务接口：获取单个节点基本信息
-     * @param {number} nodeId 节点 ID，默认 0
-     */
+    /* 获取单个节点基本信息 */
     getNodeBasicInfo(nodeId = 0) {
         return this.get(`/nodes/${nodeId}/basicinfo`);
     }
 
-    /** 登录，返回 token */
-    login(payload) {  
+    /* 登录，返回 token */
+    login(payload) {
         return this.post('/user/login', payload);
     }
 
-    /** 获取 AP 列表 */
+    /* 获取 AP 列表 */
     getNodes() {
         return this.get('/nodes');
     }
 
-    /** 获取节点高级信息 */
+    /* 获取节点高级信息 */
     getNodeAdvInfo(nodeId) {
         return this.get(`/nodes/${nodeId}/advinfo`);
     }
 
-    /** 设置节点基础信息 */
+    /* 设置节点基础信息 */
     setNodeBasicInfo(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/basicinfo`, payload);
     }
 
-    /** 设置节点高级信息 */
+    /* 设置节点高级信息 */
     setNodeAdvInfo(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/advinfo`, payload);
     }
 
-    /** 获取设备连接信息 */
+    /* 获取设备连接信息 */
     getNodeConnInfo(nodeId) {
         return this.get(`/nodes/${nodeId}/conninfo`);
     }
 
-    /** 节点流量统计 */
+    /* 节点流量统计 */
     getNodeTraffic(nodeId) {
         return this.get(`/nodes/${nodeId}/stats/traffic`);
     }
 
-    /** 时间同步 */
+    /* 时间同步 */
     timeSync(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/timesync`, payload);
     }
 
-    /** 设备连接 */
+    /* 设备连接 */
     connectNode(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/connect`, payload);
     }
 
-    /** 断开设备连接 */
+    /* 断开设备连接 */
     disconnectNode(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/disconnect`, payload);
     }
 
-    /** 重启指定节点 */
+    /* 重启指定节点 */
     rebootNode(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/reboot`, payload);
     }
 
-    /** 上传固件（FormData，需外部构建） */
+    /* 恢复出厂设置 */
+    factoryResetNode(nodeId, payload = {}) {
+        return this.post(`/nodes/${nodeId}/factory`, payload);
+    }
+
+    /* 上传固件（FormData，需外部构建） */
     uploadFirmware(nodeId, formData) {
         return this.post(`/nodes/${nodeId}/firmware/upload`, formData, {
             // FormData 时不要覆盖 Content-Type，让浏览器自动带 boundary
         });
     }
 
-    /** 升级节点固件 */
+    /* 升级节点固件 */
     upgradeFirmware(nodeId, payload) {
         return this.post(`/nodes/${nodeId}/firmware/upgrade`, payload);
     }

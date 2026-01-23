@@ -18,7 +18,7 @@ class LayoutController {
         this.userTrigger = document.getElementById('userTrigger');
         this.userDropdown = document.getElementById('userDropdown');
 
-        // 1024px 以下切换为抽屉模式，桌面保持可折叠侧边栏
+        // 1024px 以下才切换为抽屉模式，默认桌面保持侧栏展开
         this.drawerBreakpoint = 1024;
         this.isDrawer = window.innerWidth < this.drawerBreakpoint;
         this.isCollapsed = false;

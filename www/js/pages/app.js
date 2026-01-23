@@ -19,6 +19,8 @@
 
         // 已加载片段的缓存，避免重复 fetch
         const cache = new Map();
+        // 串行化 section 加载，避免快速切换导致状态错乱
+        let sectionLoading = Promise.resolve();
 
         await apiClient.init();
         new LayoutController();
@@ -27,7 +29,7 @@
         if (mainNav) {
             // 拦截导航点击，阻止默认锚点跳转，改为显隐 section
             mainNav.addEventListener('click', (e) => {
-                const link = e.target.closest('.menu-item');
+                const link = closestPolyfill(e.target, '.menu-item');
                 if (!link) return;
                 e.preventDefault();
                 const target = link.dataset.target;
@@ -64,34 +66,36 @@
             const config = sections[target];
             if (!config) return;
 
-            if (!cache.has(target)) {
-                // 首次访问该 section 时，fetch 片段并缓存
-                const sectionEl = await fetchSection(config.fragment);
-                if (!sectionEl) return;
-                sectionEl.hidden = true;
-                sectionEl.dataset.sectionKey = target;
-                contentArea.appendChild(sectionEl);
-                cache.set(target, sectionEl);
-            }
+            // 串行化加载，避免快速切换导致状态错乱
+            sectionLoading = sectionLoading.then(async () => {
+                if (!cache.has(target)) {
+                    const sectionEl = await fetchSection(config.fragment);
+                    if (!sectionEl) return;
+                    sectionEl.hidden = true;
+                    sectionEl.dataset.sectionKey = target;
+                    contentArea.appendChild(sectionEl);
+                    cache.set(target, sectionEl);
+                }
 
-            // 显隐控制：为兼容旧浏览器，同时设置 hidden 与 display
-            cache.forEach((el, key) => {
-                const visible = key === target;
-                el.hidden = !visible;
-                el.style.display = visible ? '' : 'none';
+                cache.forEach((el, key) => {
+                    const visible = key === target;
+                    el.hidden = !visible;
+                    el.style.display = visible ? '' : 'none';
+                });
+
+                const current = cache.get(target);
+                if (!current) return;
+
+                if (!config.initialized && typeof config.init === 'function') {
+                    config.init(current);
+                    config.initialized = true;
+                }
+
+                current.hidden = false;
+                current.style.display = '';
+                history.replaceState(null, '', `#${target}`);
             });
-
-            const current = cache.get(target);
-            if (!current) return;
-
-            if (!config.initialized && typeof config.init === 'function') {
-                config.init(current);
-                config.initialized = true;
-            }
-
-            current.hidden = false;
-            current.style.display = '';
-            history.replaceState(null, '', `#${target}`);
+            return sectionLoading;
         }
 
         async function fetchSection(path) {
@@ -111,6 +115,21 @@
                 console.error('加载片段出错', err);
                 return null;
             }
+        }
+
+        function closestPolyfill(el, selector) {
+            if (!el) return null;
+            if (typeof el.closest === 'function') return el.closest(selector);
+            const match = (node) => {
+                const fn = node.matches || node.msMatchesSelector || node.webkitMatchesSelector;
+                return fn ? fn.call(node, selector) : false;
+            };
+            let node = el;
+            while (node && node !== document) {
+                if (match(node)) return node;
+                node = node.parentElement;
+            }
+            return null;
         }
     }
 })();
